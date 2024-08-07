@@ -42,6 +42,7 @@
         "/Users/lazyspell/.local/share/nvim/lazy/nvim-treesitter/lua",
         "/Users/lazyspell/.local/share/nvim/lazy/nvim-tree.lua/lua",
         "/Users/lazyspell/.config/nvim/lua",
-        "${3rd}/luv/library"
+        "${3rd}/luv/library",
+        "${3rd}/luassert/library"
     ]
 }

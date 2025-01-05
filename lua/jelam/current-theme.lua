@@ -1,4 +1,6 @@
-vim.cmd("colorscheme eldritch")
+vim.cmd("colorscheme solarized-osaka")
+-- vim.cmd("colorscheme eldritch")
+-- vim.cmd("colorscheme tokyonight")
 
 vim.api.nvim_set_hl(0, "TelescopePromptNormal", { bg = "none" })
 vim.api.nvim_set_hl(0, "TelescopeResultsNormal", { bg = "none" })

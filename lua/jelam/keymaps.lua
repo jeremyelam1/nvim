@@ -39,4 +39,6 @@ km.set("n", "<leader>ws", "<cmd>SessionSave<CR>", { desc = "Save session for aut
 
 km.set("n", "<leader>ct", ":ThemeToggle<CR>", { desc = "Toggle theme selector" })
 
--- Dap Keymaps
+-- Theme Keymaps
+km.set("n", "<leader>ct", ":ThemeToggle<CR>", { desc = "Toggle through themes" })
+km.set("n", "<leader>cs", ":ThemeSelect<CR>", { desc = "Select theme from menu" })

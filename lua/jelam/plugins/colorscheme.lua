@@ -147,10 +147,49 @@ return {
 			})
 		end,
 	},
+	-- NOTE catppuccin
+	{
+		"catppuccin/nvim",
+		name = "catppuccin",
+		lazy = true,
+		config = function()
+			require("catppuccin").setup({
+				transparent_background = true,
+				term_colors = true,
+				styles = {
+					comments = { "italic" },
+					functions = { "italic" },
+					keywords = { "italic" },
+					strings = {},
+					variables = {},
+				},
+				integrations = {
+					nvimtree = true,
+					telescope = true,
+					notify = false,
+					mini = false,
+				},
+				custom_highlights = function(colors)
+					return {
+						NormalFloat = { bg = "none" },
+						FloatBorder = { bg = "none" },
+						TelescopeNormal = { bg = "none" },
+						TelescopeBorder = { bg = "none" },
+						TelescopePromptNormal = { bg = "none" },
+						TelescopeResultsNormal = { bg = "none" },
+						TelescopePreviewNormal = { bg = "none" },
+						NvimTreeNormal = { bg = "none" },
+						NvimTreeNormalNC = { bg = "none" },
+						NvimTreeWinSeparator = { bg = "none" },
+					}
+				end,
+			})
+		end,
+	},
 	-- NOTE: neosolarized
 	{
 		"craftzdog/solarized-osaka.nvim",
-		lazy = false,
+		lazy = true,
 		config = function()
 			require("solarized-osaka").setup({
 				transparent = true,
@@ -163,60 +202,14 @@ return {
 					functions = {},
 					variables = {},
 					-- Background styles. Can be "dark", "transparent" or "normal"
-					sidebars = "dark", -- style for sidebars, see below
-					floats = "dark", -- style for floating windows
+					sidebars = "transparent", -- style for sidebars, see below
+					floats = "transparent", -- style for floating windows
 				},
 				sidebars = { "qf", "help" }, -- Set a darker background on sidebar-like windows. For example: `["qf", "vista_kind", "terminal", "packer"]`
 				day_brightness = 0.3, -- Adjusts the brightness of the colors of the **Day** style. Number between 0 and 1, from dull to vibrant colors
-				hide_inactive_statusline = false, -- Enabling this option, will hide inactive statuslines and replace them with a thin border instead. Should work with the standard **StatusLine** and **LuaLine**.
+				hide_inactive_statusline = true, -- Enabling this option, will hide inactive statuslines and replace them with a thin border instead. Should work with the standard **StatusLine** and **LuaLine**.
 				dim_inactive = false, -- dims inactive windows
 				lualine_bold = false, -- When `true`, section headers in the lualine theme will be bold
-				on_highlights = function(hl, c)
-					local prompt = "#2d3149"
-					hl.TelescopeNormal = {
-						bg = "none",
-						fg = "none",
-					}
-					hl.TelescopeBorder = {
-						bg = "none",
-						fg = "none",
-					}
-					hl.TelescopePromptNormal = {
-						bg = "none",
-					}
-					hl.TelescopePromptBorder = {
-						bg = "none",
-						fg = "none",
-					}
-					hl.TelescopePromptTitle = {
-						bg = "none",
-						fg = "none",
-					}
-					hl.TelescopePreviewTitle = {
-						bg = "none",
-						fg = "none",
-					}
-					hl.TelescopeResultsTitle = {
-						bg = "none",
-						fg = "none",
-					}
-					hl.NvimTreeNormal = {
-						bg = "none",
-						fg = "none",
-					}
-					hl.NvimTreeEndOfBuffer = {
-						bg = "none",
-						fg = "none",
-					}
-					hl.NvimTreeVertSplit = {
-						bg = "none",
-						fg = "none",
-					}
-					hl.NvimTreeNormalNC = {
-						bg = "none",
-						fg = "none",
-					}
-				end,
 			})
 		end,
 	},

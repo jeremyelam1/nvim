@@ -37,4 +37,6 @@ km.set(
 km.set("n", "<leader>wr", "<cmd>SessionRestore<CR>", { desc = "Restore session for cwd" }) -- restore last workspace session for current directory
 km.set("n", "<leader>ws", "<cmd>SessionSave<CR>", { desc = "Save session for auto session root dir" }) -- save workspace session for current working directory
 
+km.set("n", "<leader>ct", ":ThemeToggle<CR>", { desc = "Toggle theme selector" })
+
 -- Dap Keymaps

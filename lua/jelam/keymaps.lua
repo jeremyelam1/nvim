@@ -11,7 +11,7 @@ km.set("n", "<leader>fj", require("fzf-lua").helptags, { desc = "Help Tags" })
 km.set("n", "<leader>fgc", require("fzf-lua").git_bcommits, { desc = "Browse File Commits" })
 km.set("n", "<leader>fgs", require("fzf-lua").git_status, { desc = "Git Status" })
 km.set("n", "<leader>fs", require("fzf-lua").spell_suggest, { desc = "Spelling Suggestions" })
-km.set("n", "gd", require("fzf-lua").lsp_definitions, { desc = "Jump to Definition" })
+km.set("n", "fd", require("fzf-lua").lsp_definitions, { desc = "Jump to Definition" })
 km.set(
 	"n",
 	"<leader>tb",

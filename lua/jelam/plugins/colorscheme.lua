@@ -1,3 +1,56 @@
+-- List of available themes
+local themes = {
+	"eldritch",
+	"rose-pine",
+	"gruvbox",
+	"kanagawa",
+	"catppuccin",
+	"solarized-osaka",
+	"tokyonight",
+	"dracula",
+	"monokai-pro",
+	"nightfox",
+	"onedarkpro",
+}
+
+-- Function to cycle through themes
+local function cycle_themes()
+	local current_theme = vim.g.colors_name
+	local next_theme_index = 1
+
+	-- Find current theme index
+	for i, theme in ipairs(themes) do
+		if current_theme == theme then
+			next_theme_index = (i % #themes) + 1
+			break
+		end
+	end
+
+	-- Set the next theme
+	local next_theme = themes[next_theme_index]
+	vim.cmd.colorscheme(next_theme)
+	vim.notify("Switched to " .. next_theme)
+end
+
+-- Create user commands
+vim.api.nvim_create_user_command("ThemeToggle", function()
+	cycle_themes()
+end, {})
+
+vim.api.nvim_create_user_command("ThemeSelect", function()
+	vim.ui.select(themes, {
+		prompt = "Select Theme",
+		format_item = function(item)
+			return item
+		end,
+	}, function(theme)
+		if theme then
+			vim.cmd.colorscheme(theme)
+			vim.notify("Switched to " .. theme)
+		end
+	end)
+end, {})
+
 return {
 	-- NOTE: eldritch
 	{
@@ -147,10 +200,49 @@ return {
 			})
 		end,
 	},
+	-- NOTE catppuccin
+	{
+		"catppuccin/nvim",
+		name = "catppuccin",
+		lazy = true,
+		config = function()
+			require("catppuccin").setup({
+				transparent_background = true,
+				term_colors = true,
+				styles = {
+					comments = { "italic" },
+					functions = { "italic" },
+					keywords = { "italic" },
+					strings = {},
+					variables = {},
+				},
+				integrations = {
+					nvimtree = true,
+					telescope = true,
+					notify = false,
+					mini = false,
+				},
+				custom_highlights = function(colors)
+					return {
+						NormalFloat = { bg = "none" },
+						FloatBorder = { bg = "none" },
+						TelescopeNormal = { bg = "none" },
+						TelescopeBorder = { bg = "none" },
+						TelescopePromptNormal = { bg = "none" },
+						TelescopeResultsNormal = { bg = "none" },
+						TelescopePreviewNormal = { bg = "none" },
+						NvimTreeNormal = { bg = "none" },
+						NvimTreeNormalNC = { bg = "none" },
+						NvimTreeWinSeparator = { bg = "none" },
+					}
+				end,
+			})
+		end,
+	},
 	-- NOTE: neosolarized
 	{
 		"craftzdog/solarized-osaka.nvim",
-		lazy = false,
+		lazy = true,
 		config = function()
 			require("solarized-osaka").setup({
 				transparent = true,
@@ -163,60 +255,14 @@ return {
 					functions = {},
 					variables = {},
 					-- Background styles. Can be "dark", "transparent" or "normal"
-					sidebars = "dark", -- style for sidebars, see below
-					floats = "dark", -- style for floating windows
+					sidebars = "transparent", -- style for sidebars, see below
+					floats = "transparent", -- style for floating windows
 				},
 				sidebars = { "qf", "help" }, -- Set a darker background on sidebar-like windows. For example: `["qf", "vista_kind", "terminal", "packer"]`
 				day_brightness = 0.3, -- Adjusts the brightness of the colors of the **Day** style. Number between 0 and 1, from dull to vibrant colors
-				hide_inactive_statusline = false, -- Enabling this option, will hide inactive statuslines and replace them with a thin border instead. Should work with the standard **StatusLine** and **LuaLine**.
+				hide_inactive_statusline = true, -- Enabling this option, will hide inactive statuslines and replace them with a thin border instead. Should work with the standard **StatusLine** and **LuaLine**.
 				dim_inactive = false, -- dims inactive windows
 				lualine_bold = false, -- When `true`, section headers in the lualine theme will be bold
-				on_highlights = function(hl, c)
-					local prompt = "#2d3149"
-					hl.TelescopeNormal = {
-						bg = "none",
-						fg = "none",
-					}
-					hl.TelescopeBorder = {
-						bg = "none",
-						fg = "none",
-					}
-					hl.TelescopePromptNormal = {
-						bg = "none",
-					}
-					hl.TelescopePromptBorder = {
-						bg = "none",
-						fg = "none",
-					}
-					hl.TelescopePromptTitle = {
-						bg = "none",
-						fg = "none",
-					}
-					hl.TelescopePreviewTitle = {
-						bg = "none",
-						fg = "none",
-					}
-					hl.TelescopeResultsTitle = {
-						bg = "none",
-						fg = "none",
-					}
-					hl.NvimTreeNormal = {
-						bg = "none",
-						fg = "none",
-					}
-					hl.NvimTreeEndOfBuffer = {
-						bg = "none",
-						fg = "none",
-					}
-					hl.NvimTreeVertSplit = {
-						bg = "none",
-						fg = "none",
-					}
-					hl.NvimTreeNormalNC = {
-						bg = "none",
-						fg = "none",
-					}
-				end,
 			})
 		end,
 	},
@@ -280,6 +326,137 @@ return {
 			--         end
 			--     end,
 			-- })
+		end,
+	},
+
+	-- NOTE : dracula
+	{
+		"Mofiqul/dracula.nvim",
+		name = "dracula",
+		-- priority = 1000,
+		config = function()
+			local transparent = true
+
+			require("dracula").setup({
+				transparent_bg = transparent,
+
+				styles = {
+					comments = { italic = false },
+					keywords = { italic = false },
+					sidebars = transparent and "transparent" or "dark",
+					floats = transparent and "transparent" or "dark",
+				},
+			})
+		end,
+	},
+
+	-- NOTE : nightfox
+	{
+		"EdenEast/nightfox.nvim",
+		name = "nightfox",
+		-- priority = 1000,
+		config = function()
+			local transparent = true
+
+			require("nightfox").setup({
+				options = {
+					-- Compiled file's destination location
+					compile_path = vim.fn.stdpath("cache") .. "/nightfox",
+					compile_file_suffix = "_compiled", -- Compiled file suffix
+					transparent = true, -- Disable setting background
+					terminal_colors = true, -- Set terminal colors (vim.g.terminal_color_*) used in `:terminal`
+					dim_inactive = false, -- Non focused panes set to alternative background
+					module_default = true, -- Default enable value for modules
+					colorblind = {
+						enable = false, -- Enable colorblind support
+						simulate_only = false, -- Only show simulated colorblind colors and not diff shifted
+						severity = {
+							protan = 0, -- Severity [0,1] for protan (red)
+							deutan = 0, -- Severity [0,1] for deutan (green)
+							tritan = 0, -- Severity [0,1] for tritan (blue)
+						},
+					},
+					styles = { -- Style to be applied to different syntax groups
+						comments = "NONE", -- Value is any valid attr-list value `:help attr-list`
+						conditionals = "NONE",
+						constants = "NONE",
+						functions = "NONE",
+						keywords = "NONE",
+						numbers = "NONE",
+						operators = "NONE",
+						strings = "NONE",
+						types = "NONE",
+						variables = "NONE",
+					},
+					inverse = { -- Inverse highlight for different types
+						match_paren = false,
+						visual = false,
+						search = false,
+					},
+					modules = { -- List of various plugins and additional options
+						-- ...
+					},
+				},
+				palettes = {},
+				specs = {},
+				groups = {},
+			})
+		end,
+	},
+
+	-- NOTE : monokai-pro
+	{
+		"loctvl842/monokai-pro.nvim",
+		name = "monokai-pro",
+		-- priority = 1000,
+		config = function()
+			local transparent = true
+
+			require("monokai-pro").setup({
+				transparent_background = transparent,
+				terminal_colors = true,
+				devicons = true, -- highlight the icons of `nvim-web-devicons`
+				styles = {
+					comment = { italic = true },
+					keyword = { italic = true }, -- any other keyword
+					type = { italic = true }, -- (preferred) int, long, char, etc
+					storageclass = { italic = true }, -- static, register, volatile, etc
+					structure = { italic = true }, -- struct, union, enum, etc
+					parameter = { italic = true }, -- parameter pass in function
+					annotation = { italic = true },
+					tag_attribute = { italic = true }, -- attribute of tag in reactjs
+				},
+				filter = "pro", -- classic | octagon | pro | machine | ristretto | spectrum
+				-- Enable this will disable filter option
+				day_night = {
+					enable = false, -- turn off by default
+					day_filter = "pro", -- classic | octagon | pro | machine | ristretto | spectrum
+					night_filter = "spectrum", -- classic | octagon | pro | machine | ristretto | spectrum
+				},
+				inc_search = "background", -- underline | background
+				background_clear = {
+					-- "float_win",
+					"toggleterm",
+					"telescope",
+					"which-key",
+					"renamer",
+					"notify",
+					"nvim-tree",
+					"fzf-lua",
+					-- "neo-tree",
+					-- "bufferline", -- better used if background of `neo-tree` or `nvim-tree` is cleared
+				}, -- "float_win", "toggleterm", "telescope", "which-key", "renamer", "neo-tree", "nvim-tree", "bufferline"
+				plugins = {
+					bufferline = {
+						underline_selected = false,
+						underline_visible = false,
+					},
+					indent_blankline = {
+						context_highlight = "default", -- default | pro
+						context_start_underline = false,
+					},
+				},
+			})
 		end,
 	},
 }

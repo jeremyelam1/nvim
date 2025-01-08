@@ -1,4 +1,4 @@
 return {
-	"fatih/vim-go",
-	run = ":GoUpdateBinaries",
+	-- "fatih/vim-go",
+	-- run = ":GoUpdateBinaries",
 }

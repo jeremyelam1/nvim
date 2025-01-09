@@ -25,11 +25,6 @@ return {
 				dapui.close()
 			end
 
-			vim.keymap.set("n", "<Leader>dt", ":DapUiToggle<CR>", { desc = "Debug: UI Toggle" })
-			vim.keymap.set("n", "<Leader>db", dap.toggle_breakpoint, { desc = "Debug: Breakpoint" })
-			vim.keymap.set("n", "<Leader>dc", dap.continue, { desc = "Debug: Continue" })
-			vim.keymap.set("n", "<Leader>dr", ":lua require('dapui').open({reset = true})<CR>", { desc = "Debug: Run" })
-
 			vim.fn.sign_define(
 				"DapBreakpoint",
 				{ text = "⏺", texthl = "DapBreakpoint", linehl = "DapBreakpoint", numhl = "DapBreakpoint" }

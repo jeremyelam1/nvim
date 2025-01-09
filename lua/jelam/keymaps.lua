@@ -1,6 +1,5 @@
 local km = vim.keymap
 
--- Fzf Keymaps
 -- km.set("n", "<leader>ff", require("fzf-lua").files, { desc = "FZF Files" })
 km.set("n", "<leader>fr", require("fzf-lua").registers, { desc = "Registers" })
 km.set("n", "<leader>fm", require("fzf-lua").marks, { desc = "Marks" })
@@ -73,3 +72,9 @@ km.set("n", "<leader>gotr", "<cmd>GoRmTag<cr>", { desc = "Go Tag: Remove" })
 km.set("n", "<leader>gotc", "<cmd>GoClearTag<cr>", { desc = "Go Tag: Clear" })
 
 km.set("n", "<leader>bbd", "<cmd>lua require('dropbar.api').pick()<cr>", { desc = "Dropbar Pick" })
+
+-- Dap Keybinds
+km.set("n", "<Leader>dt", "<CR>DapUiToggle<CR>", { desc = "Debug: UI Toggle" })
+km.set("n", "<Leader>db", ":DapToggleBreakpoint<CR>", { desc = "Debug: Breakpoint" })
+km.set("n", "<Leader>dc", "<CR>DapContinue<CR>", { desc = "Debug: Continue" })
+km.set("n", "<Leader>dr", ":lua require('dapui').open({reset = true})<CR>", { desc = "Debug: Run" })

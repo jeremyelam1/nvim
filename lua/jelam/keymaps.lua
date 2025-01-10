@@ -44,7 +44,7 @@ km.set("n", "<leader>cs", ":ThemeSelect<CR>", { desc = "Select theme from menu" 
 
 -- Telescope Keybinds
 km.set("n", "<leader>ff", "<cmd>Telescope find_files<cr>", { desc = "Fuzzy find files in cwd" })
-km.set("n", "<leader>fe", "<cmd>Telescope oldfiles<cr>", { desc = "Fuzzy find recent files" })
+km.set("n", "<leader>fe", "<cmd>Telescope old files<cr>", { desc = "Fuzzy find recent files" })
 km.set("n", "<leader>fw", "<cmd>Telescope live_grep<cr>", { desc = "Find string in cwd" })
 km.set("n", "<leader>fc", "<cmd>Telescope grep_string<cr>", { desc = "Find string under cursor in cwd" })
 km.set("n", "<leader>ft", "<cmd>TodoTelescope<cr>", { desc = "Find todos" })
@@ -56,7 +56,7 @@ km.set("n", "<leader>hl", "<cmd>HopLine<cr>", { desc = "Hop Line" })
 km.set("n", "<leader>god", "<cmd>GoDebug<cr>", { desc = "Go Debugger: start" })
 km.set("n", "<leader>gods", "<cmd>GoDebug -s<cr>", { desc = "Go Debugger: stop" })
 km.set("n", "<leader>godr", "<cmd>GoDebug -r<cr>", { desc = "Go Debugger: run" })
-km.set("n", "<leader>godb", "<cmd>GoDebug -b<cr>", { desc = "Go Debugger: breakpoint" })
+km.set("n", "<leader>godb", "<cmd>GoDebug -b<cr>", { desc = "Go Debugger: break point" })
 km.set("n", "<leader>gofs", "<cmd>GoFillStruct<cr>", { desc = "Go Fill: Struct" })
 km.set("n", "<leader>gofw", "<cmd>GoFillSwitch<cr>", { desc = "Go Fill: Switch" })
 km.set("n", "<leader>gor", "<cmd>GoIfErr<cr>", { desc = "Go Fill: If Error" })
@@ -71,10 +71,18 @@ km.set("n", "<leader>gota", "<cmd>GoAddTag<cr>", { desc = "Go Tag: Add" })
 km.set("n", "<leader>gotr", "<cmd>GoRmTag<cr>", { desc = "Go Tag: Remove" })
 km.set("n", "<leader>gotc", "<cmd>GoClearTag<cr>", { desc = "Go Tag: Clear" })
 
-km.set("n", "<leader>bbd", "<cmd>lua require('dropbar.api').pick()<cr>", { desc = "Dropbar Pick" })
-
 -- Dap Keybinds
 km.set("n", "<Leader>dt", "<CR>DapUiToggle<CR>", { desc = "Debug: UI Toggle" })
-km.set("n", "<Leader>db", ":DapToggleBreakpoint<CR>", { desc = "Debug: Breakpoint" })
+km.set("n", "<Leader>db", ":DapToggleBreakpoint<CR>", { desc = "Debug: Break point" })
 km.set("n", "<Leader>dc", "<CR>DapContinue<CR>", { desc = "Debug: Continue" })
 km.set("n", "<Leader>dr", ":lua require('dapui').open({reset = true})<CR>", { desc = "Debug: Run" })
+
+-- Yazi
+km.set("n", "<leader>-", "<cmd>Yazi<cr>", { desc = "Yazi: current file" })
+km.set("n", "<leader>cw", "<cmd>Yazi cwd<cr>", { desc = "Yazi: nvim's working directory" })
+
+-- Spellcheck
+vim.keymap.set("n", "<leader>zn", "]s", { silent = true, desc = "Next misspelled word" })
+vim.keymap.set("n", "<leader>zp", "[s", { silent = true, desc = "Previous misspelled word" })
+vim.keymap.set("n", "<leader>zf", "zg", { silent = true, desc = "Add word to spellfile" })
+vim.keymap.set("n", "<leader>zb", "zw", { silent = true, desc = "Mark word as incorrect" })

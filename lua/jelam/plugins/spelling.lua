@@ -6,7 +6,7 @@ return {
 			-- Basic spelunker configuration
 			vim.g.spelunker_check_type = 1 -- Aggressive checking
 			vim.g.spelunker_highlight_type = 1 -- Use standard highlighting
-			vim.g.enable_spelunker_vim = 1
+			vim.g.enable_spelunker_vim = 0 -- Start disabled by default
 			vim.g.spelunker_check_comments = 1 -- Enable checking in comments
 			vim.g.spelunker_disable_uri_checking = 1
 			vim.g.spelunker_disable_email_checking = 1
@@ -87,17 +87,12 @@ return {
 				"xml",
 			}
 
-			-- Enable spell checking for specific file types
+			-- Set up spell checking for specific file types (but don't enable by default)
 			vim.api.nvim_create_autocmd({ "FileType" }, {
 				pattern = { "lua", "go" },
 				callback = function()
-					-- Enable both vim's spell checker and spelunker
-					vim.opt_local.spell = true
+					vim.opt_local.spell = false
 					vim.opt_local.spelllang = "en_us"
-					-- Force check current buffer
-					vim.schedule(function()
-						vim.cmd([[silent! call spelunker#check()]])
-					end)
 				end,
 			})
 
@@ -120,11 +115,11 @@ return {
 				vim.cmd([[silent! call spelunker#clear()]])
 			end, { desc = "Clear spelling highlights" })
 
-			-- Initialize spelunker after the plugin is loaded
+			-- Initialize spelunker after the plugin is loaded (disabled by default)
 			vim.api.nvim_create_autocmd("VimEnter", {
 				callback = function()
 					vim.schedule(function()
-						vim.cmd([[silent! call spelunker#check()]])
+						vim.cmd([[silent! call spelunker#clear()]])
 					end)
 				end,
 			})

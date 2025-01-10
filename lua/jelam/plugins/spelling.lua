@@ -139,21 +139,43 @@ return {
 
 			-- Toggle spell check with visual feedback
 			vim.keymap.set("n", "<leader>s", function()
-				vim.opt_local.spell = not vim.opt_local.spell
-				if vim.opt_local.spell:get() then
+				if vim.g.enable_spelunker_vim == 1 then
+					-- Disable spell checking
+					vim.g.enable_spelunker_vim = 0
+					vim.opt_local.spell = false
+					vim.cmd([[silent! call spelunker#clear()]])
+					print("Spell check disabled")
+				else
+					-- Enable spell checking
+					vim.g.enable_spelunker_vim = 1
+					vim.opt_local.spell = true
 					vim.cmd([[silent! call spelunker#check()]])
 					print("Spell check enabled")
-				else
-					print("Spell check disabled")
 				end
 			end, { silent = true, desc = "Toggle spell check" })
 
-			-- Create user command for manual spell check
-			vim.api.nvim_create_user_command("SpellCheck", function()
+			-- Create user commands for spell check control
+			vim.api.nvim_create_user_command("SpellCheckEnable", function()
+				vim.g.enable_spelunker_vim = 1
 				vim.opt_local.spell = true
 				vim.cmd([[silent! call spelunker#check()]])
 				print("Spell check enabled")
 			end, { desc = "Enable spell checking" })
+
+			vim.api.nvim_create_user_command("SpellCheckDisable", function()
+				vim.g.enable_spelunker_vim = 0
+				vim.opt_local.spell = false
+				vim.cmd([[silent! call spelunker#clear()]])
+				print("Spell check disabled")
+			end, { desc = "Disable spell checking" })
+
+			vim.api.nvim_create_user_command("SpellCheckToggle", function()
+				if vim.g.enable_spelunker_vim == 1 then
+					vim.cmd("SpellCheckDisable")
+				else
+					vim.cmd("SpellCheckEnable")
+				end
+			end, { desc = "Toggle spell checking" })
 		end,
 	},
 }

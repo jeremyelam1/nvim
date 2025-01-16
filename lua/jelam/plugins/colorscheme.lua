@@ -356,7 +356,7 @@ return {
 					Pmenu = { bg = "" }, -- Completion menu background
 				},
 				dim_inactive = false,
-				transparent_mode = true,
+				transparent_mode = false,
 			})
 		end,
 	},
@@ -429,7 +429,7 @@ return {
 		lazy = true,
 		config = function()
 			require("catppuccin").setup({
-				transparent_background = true,
+				transparent_background = false,
 				term_colors = true,
 				styles = {
 					comments = { "italic" },
@@ -467,7 +467,7 @@ return {
 		lazy = true,
 		config = function()
 			require("solarized-osaka").setup({
-				transparent = true,
+				transparent = false,
 				terminal_colors = true, -- Configure the colors used when opening a `:terminal` in [Neovim](https://github.com/neovim/neovim)
 				styles = {
 					-- Style to be applied to different syntax groups
@@ -585,7 +585,7 @@ return {
 					-- Compiled file's destination location
 					compile_path = vim.fn.stdpath("cache") .. "/nightfox",
 					compile_file_suffix = "_compiled", -- Compiled file suffix
-					transparent = true, -- Disable setting background
+					transparent = false, -- Disable setting background
 					terminal_colors = true, -- Set terminal colors (vim.g.terminal_color_*) used in `:terminal`
 					dim_inactive = false, -- Non focused panes set to alternative background
 					module_default = true, -- Default enable value for modules

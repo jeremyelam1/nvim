@@ -3,6 +3,7 @@ return {
 	dependencies = {
 		"williamboman/mason-lspconfig.nvim",
 		"WhoIsSethDaniel/mason-tool-installer.nvim",
+		"neovim/nvim-lspconfig",
 	},
 	config = function()
 		-- import mason
@@ -37,6 +38,7 @@ return {
 				"emmet_ls",
 				"prismals",
 				"pyright",
+				"ts_ls",
 			},
 		})
 
@@ -48,8 +50,13 @@ return {
 				"black", -- python formatter
 				"pylint", -- python linter
 				"eslint_d", -- js linter
-				"goimports",
-				"gofumpt",
+				"goimports", -- go imports formatter
+				"gofumpt", -- go formatter
+				"golangci-lint", -- go linter
+				"delve", -- go debugger
+				"gomodifytags", -- go modify struct tags
+				"gotests", -- go test generator
+				"impl", -- go interface implementation generator
 			},
 		})
 	end,

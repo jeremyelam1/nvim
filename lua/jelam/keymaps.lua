@@ -44,7 +44,7 @@ km.set("n", "<leader>cs", ":ThemeSelect<CR>", { desc = "Select theme from menu" 
 
 -- Telescope Keybinds
 km.set("n", "<leader>ff", "<cmd>Telescope find_files<cr>", { desc = "Fuzzy find files in cwd" })
-km.set("n", "<leader>fe", "<cmd>Telescope old files<cr>", { desc = "Fuzzy find recent files" })
+km.set("n", "<leader>fe", "<cmd>Telescope oldfiles<cr>", { desc = "Fuzzy find recent files" })
 km.set("n", "<leader>fw", "<cmd>Telescope live_grep<cr>", { desc = "Find string in cwd" })
 km.set("n", "<leader>fc", "<cmd>Telescope grep_string<cr>", { desc = "Find string under cursor in cwd" })
 km.set("n", "<leader>ft", "<cmd>TodoTelescope<cr>", { desc = "Find todos" })
@@ -86,3 +86,5 @@ vim.keymap.set("n", "<leader>zn", "]s", { silent = true, desc = "Next misspelled
 vim.keymap.set("n", "<leader>zp", "[s", { silent = true, desc = "Previous misspelled word" })
 vim.keymap.set("n", "<leader>zf", "zg", { silent = true, desc = "Add word to spellfile" })
 vim.keymap.set("n", "<leader>zb", "zw", { silent = true, desc = "Mark word as incorrect" })
+
+km.set("n", "<Leader>qf", ":copen<CR>", { desc = "open quick fix" })

@@ -10,6 +10,8 @@ local themes = {
 	"dracula",
 	"monokai-pro",
 	"nightfox",
+	"cyberdream",
+	"tokyodark",
 }
 
 -- Colors Testing
@@ -560,7 +562,7 @@ return {
 			local transparent = true
 
 			require("dracula").setup({
-				transparent_bg = transparent,
+				-- transparent_bg = transparent,
 
 				styles = {
 					comments = { italic = false },
@@ -679,6 +681,34 @@ return {
 					},
 				},
 			})
+		end,
+	},
+
+	-- NOTE:: cyberdream
+	{
+
+		-- High-contrast, futuristic & vibrant colorscheme
+		{
+			"scottmckendry/cyberdream.nvim",
+			opts = {
+				transparent = true,
+				italic_comments = true,
+				hide_fillchars = false,
+				borderless_telescope = true,
+				terminal_colors = true,
+			},
+		},
+	},
+
+	-- NOTE:: tokyodark
+	{
+		"tiagovla/tokyodark.nvim",
+		opts = {
+			-- custom options here
+		},
+		config = function(_, opts)
+			require("tokyodark").setup(opts) -- calling setup is optional
+			vim.cmd([[colorscheme tokyodark]])
 		end,
 	},
 }

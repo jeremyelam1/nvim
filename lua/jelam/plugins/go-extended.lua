@@ -72,7 +72,7 @@ return {
 			lint_prompt_style = "vt", -- virtual text
 			lint_on_save = true,
 			linter = "golangci-lint",
-			linter_flags = "", -- e.g. "--enable-all --disable=errcheck"
+			linter_flags = "enable-all", -- e.g. "--enable-all --disable=errcheck"
 			formatter = "gofumpt",
 			fmt_on_save = true,
 			max_line_len = 120,

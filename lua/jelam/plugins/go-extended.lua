@@ -8,22 +8,34 @@ return {
 		"rcarriga/nvim-dap-ui",
 		"theHamsta/nvim-dap-virtual-text",
 	},
+	-- Optimize loading strategy
+	event = { "BufReadPre", "BufNewFile" },
+	ft = { "go", "gomod", "gowork", "gotmpl" },
+	build = ':lua require("go.install").update_all_sync()',
 	config = function()
-		require("go").setup({
+		local go = require("go")
+
+		go.setup({
+			-- Core settings
+			disable_defaults = false,
+			go_alternate_mode = "edit",
+
+			-- Formatting and linting
+			formatter = "gofumpt",
+			gofmt = "golines", -- Use golines to support max_line_len
+			max_line_len = 120,
+			lint_prompt_style = "vt",
+			lint_on_save = true,
+			linter = "golangci-lint",
+			linter_flags = "enable-all",
+			fmt_on_save = false, -- We handle this with a custom autocmd
+
 			-- DAP settings
 			dap_debug = true,
 			dap_debug_gui = true,
 			dap_debug_vt = true,
 			dap_port = 38697,
-			-- dap_configuration = {
-			-- 	type = "go",
-			-- 	request = "launch",
-			-- 	program = "${file}",
-			-- 	dlvToolPath = vim.fn.exepath("dlv"),
-			-- 	buildFlags = "-gcflags='all=-N -l'",
-			-- 	mode = "debug",
-			-- 	cwd = "${workspaceFolder}",
-			-- },
+
 			dap_configuration = {
 				type = "go",
 				request = "launch",
@@ -41,21 +53,14 @@ return {
 			},
 
 			-- Testing settings
-			test_runner = "go", -- richgo, go test, richgo, dlv, ginkgo
+			test_runner = "go",
 			run_in_floaterm = true,
-			test_efm = false,
+
 			test_timeout = "30s",
 			test_popup = true,
 			test_popup_width = 80,
 			test_popup_height = 10,
 			verbose_tests = true,
-			test_dir = "", -- if empty, use `pwd`
-
-			-- Icons and UI
-			icons = {
-				breakpoint = "🔴",
-				currentpos = "👉",
-			},
 
 			-- Tags settings
 			tags_name = "json",
@@ -63,92 +68,122 @@ return {
 			tags_transform = "snakecase",
 			tags_flags = { "-transform", "snakecase" },
 
-			-- Additional features
+			-- Features
 			luasnip = true,
 			trouble = true,
 			symbol_highlight = true,
-
-			-- Linting and formatting
-			lint_prompt_style = "vt", -- virtual text
-			lint_on_save = true,
-			linter = "golangci-lint",
-			linter_flags = "enable-all", -- e.g. "--enable-all --disable=errcheck"
-			formatter = "gofumpt",
-			fmt_on_save = true,
-			max_line_len = 120,
-
-			-- Performance
-			lsp_inlay_hints = {
-				enable = true, -- this is the only field apply to neovim > 0.10
-
-				-- following are used for neovim < 0.10 which does not implement inlay hints
-				-- hint style, set to 'eol' for end-of-line hints, 'inlay' for inline hints
-				style = "inlay",
-				-- Note: following setup only works for style = 'eol', you do not need to set it for 'inlay'
-				-- Only show inlay hints for the current line
-				only_current_line = false,
-				-- Event which triggers a refersh of the inlay hints.
-				-- You can make this "CursorMoved" or "CursorMoved,CursorMovedI" but
-				-- not that this may cause higher CPU usage.
-				-- This option is only respected when only_current_line and
-				-- autoSetHints both are true.
-				only_current_line_autocmd = "CursorMoved",
-				-- whether to show variable name before type hints with the inlay hints or not
-				-- default: false
-				show_variable_name = true,
-				-- prefix for parameter hints
-				parameter_hints_prefix = "󰊕 ",
-				show_parameter_hints = true,
-				-- prefix for all the other hints (type, chaining)
-				other_hints_prefix = "=> ",
-				-- whether to align to the length of the longest line in the file
-				max_len_align = false,
-				-- padding from the left if max_len_align is true
-				max_len_align_padding = 1,
-				-- whether to align to the extreme right or not
-				right_align = false,
-				-- padding from the right if right_align is true
-				right_align_padding = 6,
-				-- The color of the hints
-				highlight = "Comment",
-			},
-
-			-- Keymaps
-			disable_defaults = false, -- true|false when true set false to all boolean settings and replace all table
-			go_alternate_mode = "edit", -- "edit"| "split" | "vsplit"
-
-			-- Workspace
-			gofmt = "golines", -- changed from gofumpt to golines to support max_line_len
 			fillstruct = "gopls",
-			impl_template = "", -- impl module template path
 
-			-- UI customization
+			-- UI
+			icons = {
+				breakpoint = "🔴",
+				currentpos = "👉",
+				-- Add more icons for better visual feedback
+				test_pass = "✅",
+				test_fail = "❌",
+			},
 			floaterm = {
-				-- position
 				width = 0.8,
 				height = 0.8,
 				title_colors = "nord",
+				border = "rounded",
+			},
+
+			-- Inlay hints - simplified for Neovim >= 0.10
+			lsp_inlay_hints = {
+				enable = true,
+				-- For Neovim < 0.10 compatibility
+				style = "inlay",
+
+				show_variable_name = true,
+
+				parameter_hints_prefix = "󰊕 ",
+				show_parameter_hints = true,
+
+				other_hints_prefix = "=> ",
+
+				highlight = "Comment",
+			},
+
+			-- Gopls settings
+			gopls_cmd = vim.fn.executable("gopls") == 1 and { "gopls" } or nil,
+			gopls_remote_auto = true,
+			gopls_flags = {
+				"-remote=auto",
+				"-logfile=auto",
+			},
+
+			-- Diagnostic settings
+			diagnostic = {
+				hdlr = true,
+				underline = true,
+				virtual_text = { space = 0, prefix = "■" },
+				signs = true,
 			},
 		})
 
-		-- Format and Import on save
+		-- Optimize format and import on save with debouncing
 		local format_sync_grp = vim.api.nvim_create_augroup("GoFormat", {})
+		local format_timer = nil
+		local format_debounce_ms = 100 -- Adjust as needed
+
 		vim.api.nvim_create_autocmd("BufWritePre", {
 			pattern = "*.go",
-			callback = function()
-				-- Use pcall to handle potential errors
-				local format_success, format_err = pcall(function()
-					require("go.format").goimport()
-					require("go.format").gofmt()
-				end)
 
-				if not format_success then
-					vim.notify("Go format error: " .. (format_err or "unknown"), vim.log.levels.WARN)
-				end
-			end,
 			group = format_sync_grp,
+			callback = function()
+				-- Cancel any pending format operations
+				if format_timer then
+					vim.loop.timer_stop(format_timer)
+					format_timer = nil
+				end
+
+				-- Create a new timer for debouncing
+				format_timer = vim.defer_fn(function()
+					local go_format = require("go.format")
+
+					-- Use protected calls for each operation separately for better error reporting
+					local import_success, import_err = pcall(go_format.goimport)
+					if not import_success then
+						vim.notify("Go import error: " .. tostring(import_err), vim.log.levels.WARN)
+					end
+
+					local fmt_success, fmt_err = pcall(go_format.gofmt)
+					if not fmt_success then
+						vim.notify("Go format error: " .. tostring(fmt_err), vim.log.levels.WARN)
+					end
+
+					format_timer = nil
+				end, format_debounce_ms)
+			end,
 		})
+
+		-- Lazy load commands
+		vim.api.nvim_create_autocmd("FileType", {
+			pattern = { "go", "gomod", "gowork", "gotmpl" },
+			callback = function()
+				-- Load commands only when needed
+				require("go.commands")
+
+				-- Set up buffer-local keymaps for Go files
+				local bufnr = vim.api.nvim_get_current_buf()
+				vim.keymap.set("n", "<leader>gtt", function()
+					require("go.test").test(true)
+				end, { buffer = bufnr, desc = "Go Test This" })
+
+				vim.keymap.set("n", "<leader>gta", function()
+					require("go.test").test_all()
+				end, { buffer = bufnr, desc = "Go Test All" })
+			end,
+		})
+
+		-- Set up statusline integration if available
+		if package.loaded["lualine"] then
+			-- Can be used in lualine to show Go version
+			_G.go_version = function()
+				local version = vim.fn.system("go version"):match("go([%d%.]+)")
+				return version and "Go " .. version or ""
+			end
+		end
 	end,
-	ft = { "go", "gomod", "gowork", "gotmpl" },
-	build = ':lua require("go.install").update_all_sync()',
 }

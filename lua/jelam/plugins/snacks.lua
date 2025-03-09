@@ -21,20 +21,16 @@ return {
 				},
 			},
 		},
-		notifier = {
-			enabled = true,
-			timeout = 3000,
-		},
+		notifier = { enabled = true, timeout = 3000 },
 		quickfile = { enabled = true },
 		statuscolumn = { enabled = true },
-		-- words = { enabled = true },
+
 		styles = {
-			notification = {
-				wo = { wrap = true }, -- Wrap notifications
-			},
+			notification = { wo = { wrap = true } },
 		},
 	},
 	keys = {
+		-- Scratch buffers
 		{
 			"<leader>.",
 			function()
@@ -49,13 +45,8 @@ return {
 			end,
 			desc = "Select Scratch Buffer",
 		},
-		{
-			"<leader>n",
-			function()
-				Snacks.notifier.show_history()
-			end,
-			desc = "Notification History",
-		},
+
+		-- Buffer operations
 		{
 			"<leader>bd",
 			function()
@@ -70,6 +61,8 @@ return {
 			end,
 			desc = "Rename File",
 		},
+
+		-- Git operations
 		{
 			"<leader>gB",
 			function()
@@ -105,6 +98,15 @@ return {
 			end,
 			desc = "Lazygit Log (cwd)",
 		},
+
+		-- Notifications
+		{
+			"<leader>n",
+			function()
+				Snacks.notifier.show_history()
+			end,
+			desc = "Notification History",
+		},
 		{
 			"<leader>un",
 			function()
@@ -112,6 +114,8 @@ return {
 			end,
 			desc = "Dismiss All Notifications",
 		},
+
+		-- Terminal
 		{
 			"<c-/>",
 			function()
@@ -126,6 +130,8 @@ return {
 			end,
 			desc = "which_key_ignore",
 		},
+
+		-- Navigation
 		{
 			"]]",
 			function()
@@ -142,9 +148,11 @@ return {
 			desc = "Prev Reference",
 			mode = { "n", "t" },
 		},
+
+		-- Misc
 		{
 			"<leader>N",
-			desc = "Neovim News",
+
 			function()
 				Snacks.win({
 					file = vim.api.nvim_get_runtime_file("doc/news.txt", false)[1],
@@ -159,33 +167,41 @@ return {
 					},
 				})
 			end,
+			desc = "Neovim News",
 		},
 	},
 	init = function()
 		vim.api.nvim_create_autocmd("User", {
 			pattern = "VeryLazy",
 			callback = function()
-				-- Setup some globals for debugging (lazy-loaded)
+				-- Setup debugging globals
 				_G.dd = function(...)
 					Snacks.debug.inspect(...)
 				end
 				_G.bt = function()
 					Snacks.debug.backtrace()
 				end
-				vim.print = _G.dd -- Override print to use snacks for `:=` command
+				vim.print = _G.dd
 
-				-- Create some toggle mappings
+				-- Toggle mappings
 				Snacks.toggle.option("spell", { name = "Spelling" }):map("<leader>us")
 				Snacks.toggle.option("wrap", { name = "Wrap" }):map("<leader>uw")
 				Snacks.toggle.option("relativenumber", { name = "Relative Number" }):map("<leader>uL")
 				Snacks.toggle.diagnostics():map("<leader>ud")
 				Snacks.toggle.line_number():map("<leader>ul")
 				Snacks.toggle
-					.option("conceallevel", { off = 0, on = vim.o.conceallevel > 0 and vim.o.conceallevel or 2 })
+					.option("conceallevel", {
+						off = 0,
+						on = vim.o.conceallevel > 0 and vim.o.conceallevel or 2,
+					})
 					:map("<leader>uc")
 				Snacks.toggle.treesitter():map("<leader>uT")
 				Snacks.toggle
-					.option("background", { off = "light", on = "dark", name = "Dark Background" })
+					.option("background", {
+						off = "light",
+						on = "dark",
+						name = "Dark Background",
+					})
 					:map("<leader>ub")
 				Snacks.toggle.inlay_hints():map("<leader>uh")
 			end,

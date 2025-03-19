@@ -3,12 +3,52 @@ return {
 	event = "VeryLazy",
 	lazy = false,
 	version = false, -- set this if you want to always pull the latest change
-	opts = {},
+	opts = {
+		-- Configuration options
+		api_key = vim.env.ANTHROPIC_API_KEY, -- Read API key from environment
+		prompt = "You are a helpful coding assistant specialized in Go programming.",
+		max_tokens = 2000,
+		temperature = 0.7,
+
+		-- Go-specific configuration
+		file_handlers = {
+			[".go"] = {
+				prompt = "You are an expert Go programmer. Provide idiomatic Go code following best practices.",
+				temperature = 0.5, -- Lower temperature for more precise code
+			},
+			["go.mod"] = {
+				prompt = "You are an expert in Go module management.",
+				temperature = 0.3,
+			},
+			["go.sum"] = {
+				enabled = false, -- Disable for go.sum files
+			},
+		},
+
+		-- UI configuration
+		ui = {
+			width = 0.8, -- 80% of screen width
+			height = 0.8, -- 80% of screen height
+			border = "rounded",
+			icons = true,
+		},
+
+		-- Keybindings
+		keymaps = {
+			-- Add Go-specific keymaps
+			["<leader>ag"] = {
+				cmd = "/prompt You are a Go expert. Help me with the following Go code:",
+				desc = "Go Expert",
+			},
+			["<leader>at"] = { cmd = "/prompt Generate Go tests for this code:", desc = "Generate Go Tests" },
+			["<leader>ad"] = { cmd = "/prompt Debug this Go code and explain the issue:", desc = "Debug Go Code" },
+		},
+	},
 	-- if you want to build from source then do `make BUILD_FROM_SOURCE=true`
 	build = "make",
 	-- build = "powershell -ExecutionPolicy Bypass -File Build.ps1 -BuildFromSource false" -- for windows
 	dependencies = {
-		"stevearc/dressing.nvim",
+		-- "stevearc/dressing.nvim",
 		"nvim-lua/plenary.nvim",
 		"MunifTanjim/nui.nvim",
 		--- The below dependencies are optional,
@@ -41,21 +81,23 @@ return {
 			ft = { "markdown", "Avante" },
 		},
 	},
+	config = function(_, opts)
+		local avante = require("avante")
+		avante.setup(opts)
+
+		-- Set up filetype detection
+		vim.api.nvim_create_autocmd("FileType", {
+			pattern = "go",
+			callback = function()
+				-- Add buffer-local keymaps for Go files
+				vim.keymap.set("n", "<leader>agl", function()
+					avante.prompt("Explain this Go code and suggest improvements:")
+				end, { buffer = true, desc = "Explain Go Code" })
+
+				vim.keymap.set("n", "<leader>agt", function()
+					avante.prompt("Generate unit tests for this Go function:")
+				end, { buffer = true, desc = "Generate Go Tests" })
+			end,
+		})
+	end,
 }
---
--- return {
--- 	{
--- 		"yetone/avante.nvim",
--- 		event = "VeryLazy", -- Load the plugin lazily to improve startup time
--- 		config = function()
--- 			require("avante").setup({
--- 				-- Plugin configuration here
--- 				api_key = vim.env.OPENAI_API_KEY, -- Read the API key from the environment
--- 				model = "gpt-4", -- Model to use (e.g., "gpt-3.5-turbo", "gpt-4")
--- 				prompt = "You are a helpful coding assistant.",
--- 				max_tokens = 1000,
--- 				temperature = 0.7,
--- 			})
--- 		end,
--- 	},
--- }

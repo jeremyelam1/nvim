@@ -17,12 +17,14 @@ return {
 		-- enable mason and configure icons
 		mason.setup({
 			ui = {
+				border = "rounded",
 				icons = {
 					package_installed = "✓",
 					package_pending = "➜",
 					package_uninstalled = "✗",
 				},
 			},
+			max_concurrent_installers = 10,
 		})
 
 		mason_lspconfig.setup({
@@ -37,27 +39,46 @@ return {
 				"graphql",
 				"emmet_ls",
 				"prismals",
-				"pyright",
 				"ts_ls",
+				"jsonls",
+				"rust_analyzer",
 			},
+			-- auto-install configured servers (with lspconfig)
+			automatic_installation = true,
 		})
 
 		mason_tool_installer.setup({
 			ensure_installed = {
+				-- formatters
 				"prettier", -- prettier formatter
 				"stylua", -- lua formatter
 				"isort", -- python formatter
 				"black", -- python formatter
-				"pylint", -- python linter
-				"eslint_d", -- js linter
+
 				"goimports", -- go imports formatter
 				"gofumpt", -- go formatter
+				"golines", -- line length formatter for go
+				"rustfmt", -- rust formatter
+
+				-- linters
+				"pylint", -- python linter
+				"eslint_d", -- js linter
 				"golangci-lint", -- go linter
+				"shellcheck", -- shell script linter
+
+				-- debuggers
 				"delve", -- go debugger
+				"codelldb", -- debugger for C, C++, Rust
+
+				-- go tools
 				"gomodifytags", -- go modify struct tags
 				"gotests", -- go test generator
 				"impl", -- go interface implementation generator
+				"gopls", -- go language server
 			},
+			auto_update = true,
+			run_on_start = true,
+			start_delay = 3000, -- 3 second delay
 		})
 	end,
 }

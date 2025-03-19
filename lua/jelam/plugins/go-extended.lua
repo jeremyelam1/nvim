@@ -14,21 +14,76 @@ return {
 	build = ':lua require("go.install").update_all_sync()',
 	config = function()
 		local go = require("go")
+		local lspconfig = require("lspconfig")
+		local util = require("lspconfig.util")
 
+		-- Extract gopls settings from lspconfig
+		local function get_gopls_settings()
+			-- Default settings that match our lspconfig
+			local default_settings = {
+				analyses = {
+					unusedparams = true,
+					shadow = true,
+					unusedwrite = true,
+					useany = true,
+					nilness = true,
+					unusedvariable = true,
+				},
+				staticcheck = true,
+				gofumpt = true,
+				usePlaceholders = true,
+				completeUnimported = true,
+				importShortcut = "Both",
+				symbolMatcher = "fuzzy",
+				symbolStyle = "Dynamic",
+				codelenses = {
+					gc_details = true,
+					generate = true,
+					regenerate_cgo = true,
+					run_govulncheck = true,
+					test = true,
+					tidy = true,
+					upgrade_dependency = true,
+					vendor = true,
+				},
+				hints = {
+					assignVariableTypes = true,
+					compositeLiteralFields = true,
+					compositeLiteralTypes = true,
+					constantValues = true,
+					functionTypeParameters = true,
+					parameterNames = true,
+					rangeVariableTypes = true,
+				},
+			}
+
+			-- Try to get settings from lspconfig if it's already set up
+			if lspconfig.gopls and lspconfig.gopls.get_config then
+				local current_config = lspconfig.gopls.get_config(0) or {}
+				if current_config.settings and current_config.settings.gopls then
+					-- Merge with defaults, prioritizing existing settings
+					return vim.tbl_deep_extend("force", default_settings, current_config.settings.gopls)
+				end
+			end
+
+			return default_settings
+		end
+
+		-- Set up go.nvim with enhanced configuration
 		go.setup({
 			-- Core settings
 			disable_defaults = false,
 			go_alternate_mode = "edit",
 
 			-- Formatting and linting
-			formatter = "gofumpt",
+			formatter = "gofumpt", -- Primary formatter
 			gofmt = "golines", -- Use golines to support max_line_len
 			max_line_len = 120,
 			lint_prompt_style = "vt",
 			lint_on_save = true,
 			linter = "golangci-lint",
-			linter_flags = "enable-all",
-			fmt_on_save = false, -- We handle this with a custom autocmd
+			linter_flags = "--enable-all",
+			fmt_on_save = true, -- Let go.nvim handle formatting
 
 			-- DAP settings
 			dap_debug = true,
@@ -78,7 +133,7 @@ return {
 			icons = {
 				breakpoint = "🔴",
 				currentpos = "👉",
-				-- Add more icons for better visual feedback
+
 				test_pass = "✅",
 				test_fail = "❌",
 			},
@@ -89,10 +144,10 @@ return {
 				border = "rounded",
 			},
 
-			-- Inlay hints - simplified for Neovim >= 0.10
+			-- Inlay hints
 			lsp_inlay_hints = {
 				enable = true,
-				-- For Neovim < 0.10 compatibility
+
 				style = "inlay",
 
 				show_variable_name = true,
@@ -105,77 +160,135 @@ return {
 				highlight = "Comment",
 			},
 
-			-- Gopls settings
-			gopls_cmd = vim.fn.executable("gopls") == 1 and { "gopls" } or nil,
+			-- Gopls settings - we'll take control here
+			gopls_cmd = { "gopls" },
 			gopls_remote_auto = true,
 			gopls_flags = {
 				"-remote=auto",
 				"-logfile=auto",
 			},
+			-- Use the settings from lspconfig
+			gopls_settings = get_gopls_settings(),
 
 			-- Diagnostic settings
 			diagnostic = {
-				hdlr = true,
+				hdlr = true, -- Let go.nvim handle diagnostics
 				underline = true,
 				virtual_text = { space = 0, prefix = "■" },
 				signs = true,
 			},
 		})
 
-		-- Optimize format and import on save with debouncing
-		local format_sync_grp = vim.api.nvim_create_augroup("GoFormat", {})
-		local format_timer = nil
-		local format_debounce_ms = 100 -- Adjust as needed
-
-		vim.api.nvim_create_autocmd("BufWritePre", {
-			pattern = "*.go",
-
-			group = format_sync_grp,
-			callback = function()
-				-- Cancel any pending format operations
-				if format_timer then
-					vim.loop.timer_stop(format_timer)
-					format_timer = nil
-				end
-
-				-- Create a new timer for debouncing
-				format_timer = vim.defer_fn(function()
-					local go_format = require("go.format")
-
-					-- Use protected calls for each operation separately for better error reporting
-					local import_success, import_err = pcall(go_format.goimport)
-					if not import_success then
-						vim.notify("Go import error: " .. tostring(import_err), vim.log.levels.WARN)
-					end
-
-					local fmt_success, fmt_err = pcall(go_format.gofmt)
-					if not fmt_success then
-						vim.notify("Go format error: " .. tostring(fmt_err), vim.log.levels.WARN)
-					end
-
-					format_timer = nil
-				end, format_debounce_ms)
-			end,
-		})
-
-		-- Lazy load commands
+		-- Set up additional Go-specific keymaps
 		vim.api.nvim_create_autocmd("FileType", {
 			pattern = { "go", "gomod", "gowork", "gotmpl" },
 			callback = function()
-				-- Load commands only when needed
-				require("go.commands")
+				local opts = { buffer = true, silent = true }
 
-				-- Set up buffer-local keymaps for Go files
-				local bufnr = vim.api.nvim_get_current_buf()
-				vim.keymap.set("n", "<leader>gtt", function()
-					require("go.test").test(true)
-				end, { buffer = bufnr, desc = "Go Test This" })
+				-- Go-specific keymaps
+				vim.keymap.set(
+					"n",
+					"<leader>gsj",
+					"<cmd>GoTagAdd json<CR>",
+					vim.tbl_extend("force", opts, { desc = "Add json tags" })
+				)
+				vim.keymap.set(
+					"n",
+					"<leader>gsy",
+					"<cmd>GoTagAdd yaml<CR>",
+					vim.tbl_extend("force", opts, { desc = "Add yaml tags" })
+				)
+				vim.keymap.set(
+					"n",
+					"<leader>grj",
+					"<cmd>GoTagRm json<CR>",
+					vim.tbl_extend("force", opts, { desc = "Remove json tags" })
+				)
+				vim.keymap.set(
+					"n",
+					"<leader>gry",
+					"<cmd>GoTagRm yaml<CR>",
+					vim.tbl_extend("force", opts, { desc = "Remove yaml tags" })
+				)
 
-				vim.keymap.set("n", "<leader>gta", function()
-					require("go.test").test_all()
-				end, { buffer = bufnr, desc = "Go Test All" })
+				-- Test commands
+				-- vim.keymap.set(
+				-- 	"n",
+				-- 	"<leader>gt",
+				-- 	"<cmd>GoTest<CR>",
+				-- 	vim.tbl_extend("force", opts, { desc = "Run tests" })
+				-- )
+				-- vim.keymap.set(
+				-- 	"n",
+				-- 	"<leader>gtf",
+				-- 	"<cmd>GoTestFunc<CR>",
+				-- 	vim.tbl_extend("force", opts, { desc = "Test function" })
+				-- )
+				-- vim.keymap.set(
+				-- 	"n",
+				-- 	"<leader>gtc",
+				-- 	"<cmd>GoCoverage<CR>",
+				-- 	vim.tbl_extend("force", opts, { desc = "Test coverage" })
+				-- )
+
+				-- Code actions
+				-- vim.keymap.set(
+				-- 	"n",
+				-- 	"<leader>gfs",
+				-- 	"<cmd>GoFillStruct<CR>",
+				-- 	vim.tbl_extend("force", opts, { desc = "Fill struct" })
+				-- )
+				-- vim.keymap.set(
+				-- 	"n",
+				-- 	"<leader>gif",
+				-- 	"<cmd>GoIfErr<CR>",
+				-- 	vim.tbl_extend("force", opts, { desc = "Add if err" })
+				-- )
+				-- vim.keymap.set(
+				-- 	"n",
+				-- 	"<leader>gie",
+				-- 	"<cmd>GoImpl<CR>",
+				-- 	vim.tbl_extend("force", opts, { desc = "Implement interface" })
+				-- )
+
+				-- Navigation
+				-- vim.keymap.set(
+				-- 	"n",
+				-- 	"<leader>gat",
+				-- 	"<cmd>GoAlt<CR>",
+				-- 	vim.tbl_extend("force", opts, { desc = "Go to alternate file" })
+				-- )
+				-- vim.keymap.set(
+				-- 	"n",
+				-- 	"<leader>gatv",
+				-- 	"<cmd>GoAltV<CR>",
+				-- 	vim.tbl_extend("force", opts, { desc = "Go to alternate file (vsplit)" })
+				-- )
+				-- vim.keymap.set(
+				-- 	"n",
+				-- 	"<leader>gats",
+				-- 	"<cmd>GoAltS<CR>",
+				-- 	vim.tbl_extend("force", opts, { desc = "Go to alternate file (split)" })
+				-- )
 			end,
 		})
+
+		-- Set up formatting on save
+		vim.api.nvim_create_autocmd("BufWritePre", {
+			pattern = { "*.go" },
+			callback = function()
+				-- Let go.nvim handle imports and formatting
+				require("go.format").goimport()
+			end,
+		})
+
+		-- Override gopls setup in lspconfig
+		-- This will be called by mason-lspconfig
+		local old_gopls_setup = lspconfig.gopls.setup
+		lspconfig.gopls.setup = function(user_config)
+			-- Don't do anything - go.nvim will handle gopls setup
+			vim.notify("go.nvim is handling gopls configuration", vim.log.levels.INFO)
+		end
 
 		-- Set up statusline integration if available
 		if package.loaded["lualine"] then

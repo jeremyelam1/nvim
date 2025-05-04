@@ -3,14 +3,44 @@ return {
 	event = "VeryLazy",
 	lazy = false,
 	version = false, -- set this if you want to always pull the latest change
-	opts = {},
 	-- if you want to build from source then do `make BUILD_FROM_SOURCE=true`
 	build = "make",
 	-- build = "powershell -ExecutionPolicy Bypass -File Build.ps1 -BuildFromSource false" -- for windows
+	config = function()
+		local avante = require("avante")
+
+		-- Get DAP instance for integration
+		local dap = require("dap")
+
+		avante.setup({
+
+			-- DAP integration
+			dap = {
+				enabled = true,
+				-- Automatically analyze debug sessions
+				auto_analyze = true,
+				-- Include debug information in context
+				include_debug_info = true,
+				-- Include variable values in context
+				include_variables = true,
+				-- Include stack trace in context
+				include_stack_trace = true,
+			},
+		})
+
+		-- Register DAP event handlers for Avante integration
+		dap.listeners.after.event_stopped["avante"] = function(_, body)
+			if avante.config.dap and avante.config.dap.auto_analyze then
+				avante.analyze_debug_session()
+			end
+		end
+	end,
 	dependencies = {
 		"stevearc/dressing.nvim",
 		"nvim-lua/plenary.nvim",
 		"MunifTanjim/nui.nvim",
+		"mfussenegger/nvim-dap", -- Add DAP as a dependency
+		"rcarriga/nvim-dap-ui", -- Add DAP UI as a dependency
 		--- The below dependencies are optional,
 		"hrsh7th/nvim-cmp", -- autocompletion for avante commands and mentions
 		"nvim-tree/nvim-web-devicons", -- or echasnovski/mini.icons
@@ -42,20 +72,3 @@ return {
 		},
 	},
 }
---
--- return {
--- 	{
--- 		"yetone/avante.nvim",
--- 		event = "VeryLazy", -- Load the plugin lazily to improve startup time
--- 		config = function()
--- 			require("avante").setup({
--- 				-- Plugin configuration here
--- 				api_key = vim.env.OPENAI_API_KEY, -- Read the API key from the environment
--- 				model = "gpt-4", -- Model to use (e.g., "gpt-3.5-turbo", "gpt-4")
--- 				prompt = "You are a helpful coding assistant.",
--- 				max_tokens = 1000,
--- 				temperature = 0.7,
--- 			})
--- 		end,
--- 	},
--- }

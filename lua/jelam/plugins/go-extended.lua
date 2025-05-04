@@ -15,29 +15,115 @@ return {
 			dap_debug_gui = true,
 			dap_debug_vt = true,
 			dap_port = 38697,
-			-- dap_configuration = {
-			-- 	type = "go",
-			-- 	request = "launch",
-			-- 	program = "${file}",
-			-- 	dlvToolPath = vim.fn.exepath("dlv"),
-			-- 	buildFlags = "-gcflags='all=-N -l'",
-			-- 	mode = "debug",
-			-- 	cwd = "${workspaceFolder}",
-			-- },
+
+			-- Enhanced DAP configuration
+			dap_configurations = {
+				{
+					type = "go",
+					name = "Debug Current File",
+					request = "launch",
+					program = "${file}",
+					dlvToolPath = vim.fn.exepath("dlv"),
+					buildFlags = "-gcflags='all=-N -l'",
+					mode = "debug",
+					cwd = vim.fn.getcwd(),
+				},
+				{
+					type = "go",
+					name = "Debug Main Package",
+					request = "launch",
+					program = "./cmd/server/main.go", -- Adjust this path to your main package
+					dlvToolPath = vim.fn.exepath("dlv"),
+					buildFlags = "-gcflags='all=-N -l'",
+					mode = "debug",
+					cwd = vim.fn.getcwd(),
+				},
+				{
+					type = "go",
+					name = "Debug Test",
+					request = "launch",
+					mode = "test",
+					program = "${file}",
+					dlvToolPath = vim.fn.exepath("dlv"),
+					buildFlags = "-gcflags='all=-N -l'",
+					cwd = vim.fn.getcwd(),
+				},
+			},
+
+			-- Interactive program selection function
 			dap_configuration = {
 				type = "go",
 				request = "launch",
-				program = "${file}",
+				program = function()
+					-- Use the current file by default
+					local program = vim.fn.expand("%:p")
+
+					-- If we're in a main.go file or a cmd directory, use that
+					if vim.fn.expand("%:t") == "main.go" then
+						program = vim.fn.expand("%:p")
+					elseif vim.fn.filereadable("./cmd/server/main.go") == 1 then
+						program = "./cmd/server/main.go"
+					elseif vim.fn.filereadable("./main.go") == 1 then
+						program = "./main.go"
+					end
+
+					-- Ask the user to confirm or modify the program path
+					local input = vim.fn.input({
+						prompt = "Path to debug (main.go file): ",
+						default = program,
+						completion = "file",
+					})
+
+					return input ~= "" and input or program
+				end,
 				dlvToolPath = vim.fn.exepath("dlv"),
 				buildFlags = "-gcflags='all=-N -l'",
 				mode = "debug",
-				cwd = "${workspaceFolder}",
-				substitutePath = {
-					{
-						from = "${workspaceFolder}",
-						to = vim.fn.getcwd(),
-					},
-				},
+				cwd = vim.fn.getcwd(), -- Use actual current working directory instead of placeholder
+				args = function()
+					-- Ask for command line arguments
+					local input = vim.fn.input({
+						prompt = "Command line arguments: ",
+						default = "",
+					})
+
+					if input == "" then
+						return {}
+					end
+
+					-- Split the input by spaces, respecting quotes
+					local args = {}
+					local current_arg = ""
+					local in_quotes = false
+					local quote_char = nil
+
+					for i = 1, #input do
+						local char = input:sub(i, i)
+
+						if (char == '"' or char == "'") and (not in_quotes or quote_char == char) then
+							if in_quotes then
+								in_quotes = false
+								quote_char = nil
+							else
+								in_quotes = true
+								quote_char = char
+							end
+						elseif char == " " and not in_quotes then
+							if current_arg ~= "" then
+								table.insert(args, current_arg)
+								current_arg = ""
+							end
+						else
+							current_arg = current_arg .. char
+						end
+					end
+
+					if current_arg ~= "" then
+						table.insert(args, current_arg)
+					end
+
+					return args
+				end,
 			},
 
 			-- Testing settings

@@ -90,7 +90,15 @@ return {
 			dap_debug_gui = true,
 			dap_debug_vt = true,
 			dap_port = 38697,
-
+			-- dap_configuration = {
+			-- 	type = "go",
+			-- 	request = "launch",
+			-- 	program = "${file}",
+			-- 	dlvToolPath = vim.fn.exepath("dlv"),
+			-- 	buildFlags = "-gcflags='all=-N -l'",
+			-- 	mode = "debug",
+			-- 	cwd = "${workspaceFolder}",
+			-- },
 			dap_configuration = {
 				type = "go",
 				request = "launch",

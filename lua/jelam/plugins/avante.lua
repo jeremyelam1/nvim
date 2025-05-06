@@ -3,54 +3,44 @@ return {
 	event = "VeryLazy",
 	lazy = false,
 	version = false, -- set this if you want to always pull the latest change
-	opts = {
-		-- Configuration options
-		api_key = vim.env.ANTHROPIC_API_KEY, -- Read API key from environment
-		prompt = "You are a helpful coding assistant specialized in Go programming.",
-		max_tokens = 2000,
-		temperature = 0.7,
-
-		-- Go-specific configuration
-		file_handlers = {
-			[".go"] = {
-				prompt = "You are an expert Go programmer. Provide idiomatic Go code following best practices.",
-				temperature = 0.5, -- Lower temperature for more precise code
-			},
-			["go.mod"] = {
-				prompt = "You are an expert in Go module management.",
-				temperature = 0.3,
-			},
-			["go.sum"] = {
-				enabled = false, -- Disable for go.sum files
-			},
-		},
-
-		-- UI configuration
-		ui = {
-			width = 0.8, -- 80% of screen width
-			height = 0.8, -- 80% of screen height
-			border = "rounded",
-			icons = true,
-		},
-
-		-- Keybindings
-		keymaps = {
-			-- Add Go-specific keymaps
-			["<leader>ag"] = {
-				cmd = "/prompt You are a Go expert. Help me with the following Go code:",
-				desc = "Go Expert",
-			},
-			["<leader>at"] = { cmd = "/prompt Generate Go tests for this code:", desc = "Generate Go Tests" },
-			["<leader>ad"] = { cmd = "/prompt Debug this Go code and explain the issue:", desc = "Debug Go Code" },
-		},
-	},
 	-- if you want to build from source then do `make BUILD_FROM_SOURCE=true`
 	build = "make",
 	-- build = "powershell -ExecutionPolicy Bypass -File Build.ps1 -BuildFromSource false" -- for windows
+	config = function()
+		local avante = require("avante")
+
+		-- Get DAP instance for integration
+		local dap = require("dap")
+
+		avante.setup({
+
+			-- DAP integration
+			dap = {
+				enabled = true,
+				-- Automatically analyze debug sessions
+				auto_analyze = true,
+				-- Include debug information in context
+				include_debug_info = true,
+				-- Include variable values in context
+				include_variables = true,
+				-- Include stack trace in context
+				include_stack_trace = true,
+			},
+		})
+
+		-- Register DAP event handlers for Avante integration
+		dap.listeners.after.event_stopped["avante"] = function(_, body)
+			if avante.config.dap and avante.config.dap.auto_analyze then
+				avante.analyze_debug_session()
+			end
+		end
+	end,
 	dependencies = {
 		-- "stevearc/dressing.nvim",
 		"nvim-lua/plenary.nvim",
 		"MunifTanjim/nui.nvim",
+		"mfussenegger/nvim-dap", -- Add DAP as a dependency
+		"rcarriga/nvim-dap-ui", -- Add DAP UI as a dependency
 		--- The below dependencies are optional,
 		"hrsh7th/nvim-cmp", -- autocompletion for avante commands and mentions
 		"nvim-tree/nvim-web-devicons", -- or echasnovski/mini.icons
@@ -100,4 +90,5 @@ return {
 			end,
 		})
 	end,
+}
 }

@@ -10,7 +10,47 @@ return {
 			local dap, dapui = require("dap"), require("dapui")
 
 			require("dapui").setup()
-			require("dap-go").setup()
+
+			-- Custom setup for Go debugging to fix the ${workspaceRoot} issue
+			require("dap-go").setup({
+				-- dap-go configuration
+				dap_configurations = {
+					{
+						type = "go",
+						name = "Debug",
+						request = "launch",
+						program = "${file}",
+					},
+					{
+						type = "go",
+						name = "Debug Package",
+						request = "launch",
+						program = "${fileDirname}",
+					},
+					{
+						type = "go",
+						name = "Debug Main Package",
+						request = "launch",
+						program = "./cmd/server", -- Adjust this path to your main package
+					},
+					{
+						type = "go",
+						name = "Debug Custom Path",
+						request = "launch",
+						program = function()
+							return vim.fn.input("Path to main package: ", vim.fn.getcwd() .. "/", "file")
+						end,
+					},
+				},
+				-- Ensure delve is properly configured
+				delve = {
+					path = "dlv", -- Path to the delve command
+					initialize_timeout_sec = 20,
+					port = "${port}",
+					args = {},
+					build_flags = "",
+				},
+			})
 
 			dap.listeners.before.attach.dapui_config = function()
 				dapui.open()

@@ -5,6 +5,8 @@ return {
 		"hrsh7th/cmp-nvim-lsp",
 		{ "antosha417/nvim-lsp-file-operations", config = true },
 		{ "folke/neodev.nvim", opts = {} },
+		"williamboman/mason.nvim",
+		"williamboman/mason-lspconfig.nvim",
 	},
 	config = function()
 		local lspconfig = require("lspconfig")
@@ -92,46 +94,12 @@ return {
 					})
 				end,
 			},
+			-- gopls is now handled by go.nvim plugin
+			-- Configuration is stored here for reference but not used directly
 			gopls = {
-				cmd = { "gopls" },
-				filetypes = { "go", "gomod" },
-				root_dir = lspconfig.util.root_pattern("go.work", "go.mod", ".git"),
-				settings = {
-					gopls = {
-						analyses = {
-							unusedparams = true,
-							shadow = true,
-							unusedwrite = true,
-							useany = true,
-						},
-						staticcheck = true,
-						gofumpt = true,
-						usePlaceholders = true,
-						completeUnimported = true,
-						importShortcut = "Both",
-						symbolMatcher = "fuzzy",
-						symbolStyle = "Dynamic",
-					},
-				},
-				on_attach = function(client, bufnr)
-					vim.api.nvim_create_autocmd("BufWritePre", {
-						pattern = "*.go",
-						callback = function()
-							-- Organize imports
-							local params = vim.lsp.util.make_range_params()
-							params.context = { only = { "source.organizeImports" } }
-							local result = vim.lsp.buf_request_sync(0, "textDocument/codeAction", params, 3000)
-							for _, res in pairs(result or {}) do
-								for _, r in pairs(res.result or {}) do
-									if r.edit then
-										vim.lsp.util.apply_workspace_edit(r.edit, "UTF-8")
-									end
-								end
-							end
-							vim.lsp.buf.format({ async = false })
-						end,
-					})
-				end,
+				-- This configuration is for reference only
+				-- The actual setup is handled by go.nvim
+				disabled = true, -- Signal to mason-lspconfig that we're handling this
 			},
 			graphql = {
 				filetypes = { "graphql", "gql", "svelte", "typescriptreact", "javascriptreact" },
@@ -151,12 +119,86 @@ return {
 			lua_ls = {
 				settings = {
 					Lua = {
-						diagnostics = { globals = { "vim" } },
+						diagnostics = {
+							globals = { "vim" },
+						},
+						workspace = {
+							library = vim.api.nvim_get_runtime_file("", true),
+							checkThirdParty = false,
+						},
+						telemetry = { enable = false },
 						completion = { callSnippet = "Replace" },
 					},
 				},
 			},
+			rust_analyzer = {
+				settings = {
+					["rust-analyzer"] = {
+						checkOnSave = {
+							command = "clippy",
+						},
+						cargo = {
+							allFeatures = true,
+						},
+						procMacro = {
+							enable = true,
+						},
+					},
+				},
+			},
+			tsserver = {
+				settings = {
+					typescript = {
+						inlayHints = {
+							includeInlayParameterNameHints = "all",
+							includeInlayParameterNameHintsWhenArgumentMatchesName = false,
+							includeInlayFunctionParameterTypeHints = true,
+							includeInlayVariableTypeHints = true,
+							includeInlayPropertyDeclarationTypeHints = true,
+							includeInlayFunctionLikeReturnTypeHints = true,
+							includeInlayEnumMemberValueHints = true,
+						},
+					},
+					javascript = {
+						inlayHints = {
+							includeInlayParameterNameHints = "all",
+							includeInlayParameterNameHintsWhenArgumentMatchesName = false,
+							includeInlayFunctionParameterTypeHints = true,
+							includeInlayVariableTypeHints = true,
+							includeInlayPropertyDeclarationTypeHints = true,
+							includeInlayFunctionLikeReturnTypeHints = true,
+							includeInlayEnumMemberValueHints = true,
+						},
+					},
+				},
+			},
 		}
+
+		-- Configure Mason
+		require("mason").setup({
+			ui = {
+				border = "rounded",
+				icons = {
+					package_installed = "✓",
+					package_pending = "➜",
+					package_uninstalled = "✗",
+				},
+			},
+		})
+
+		-- Configure Mason-LSPConfig
+		require("mason-lspconfig").setup({
+			ensure_installed = {
+				"gopls",
+				"lua_ls",
+				"tsserver",
+				"html",
+				"cssls",
+				"jsonls",
+				"rust_analyzer",
+			},
+			automatic_installation = true,
+		})
 
 		-- Setup handlers for all servers
 		mason_lspconfig.setup_handlers({
@@ -170,3 +212,4 @@ return {
 		})
 	end,
 }
+-- Mason is configured in mason.lua

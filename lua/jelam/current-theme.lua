@@ -11,6 +11,7 @@
 -- vim.cmd("colorscheme cyberdream")
 -- vim.cmd("colorscheme onedark")
 vim.cmd("colorscheme tokyodark")
+-- vim.cmd("colorscheme fluoromachine")
 
 vim.api.nvim_set_hl(0, "TelescopePromptNormal", { bg = "none" })
 vim.api.nvim_set_hl(0, "TelescopeResultsNormal", { bg = "none" })

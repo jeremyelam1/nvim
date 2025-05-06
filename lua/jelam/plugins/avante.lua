@@ -36,7 +36,7 @@ return {
 		end
 	end,
 	dependencies = {
-		"stevearc/dressing.nvim",
+		-- "stevearc/dressing.nvim",
 		"nvim-lua/plenary.nvim",
 		"MunifTanjim/nui.nvim",
 		"mfussenegger/nvim-dap", -- Add DAP as a dependency
@@ -71,4 +71,23 @@ return {
 			ft = { "markdown", "Avante" },
 		},
 	},
+	config = function(_, opts)
+		local avante = require("avante")
+		avante.setup(opts)
+
+		-- Set up filetype detection
+		vim.api.nvim_create_autocmd("FileType", {
+			pattern = "go",
+			callback = function()
+				-- Add buffer-local keymaps for Go files
+				vim.keymap.set("n", "<leader>agl", function()
+					avante.prompt("Explain this Go code and suggest improvements:")
+				end, { buffer = true, desc = "Explain Go Code" })
+
+				vim.keymap.set("n", "<leader>agt", function()
+					avante.prompt("Generate unit tests for this Go function:")
+				end, { buffer = true, desc = "Generate Go Tests" })
+			end,
+		})
+	end,
 }

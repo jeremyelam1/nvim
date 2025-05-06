@@ -12,11 +12,15 @@ local themes = {
 	"nightfox",
 	"cyberdream",
 	"tokyodark",
+	"fluoromachine",
 }
 
 -- Colors Testing
 local linkarzu_color10 = "#0D1116"
 local colors = {
+
+	lazy_color01 = "#ebfafa",
+
 	linkarzu_color18 = "#5b4996",
 	linkarzu_color19 = "#21925b",
 	linkarzu_color20 = "#027d95",
@@ -24,7 +28,8 @@ local colors = {
 	linkarzu_color22 = "#0f857c",
 	linkarzu_color23 = "#396592",
 
-	linkarzu_color04 = "#987afb",
+	linkarzu_color04 = "#ebfafa",
+	-- linkarzu_color04 = "#987afb",
 	linkarzu_color02 = "#37f499",
 	linkarzu_color03 = "#04d1f9",
 	linkarzu_color01 = "#949ae5",
@@ -90,7 +95,7 @@ return {
 		lazy = true,
 		name = "eldritch",
 		opts = {
-			transparent = true, -- Enable transparency
+			transparent = false, -- Enable transparency
 			-- Overriding colors globally using a definitions table
 			on_colors = function(global_colors)
 				-- Define all color overrides in a single table
@@ -300,14 +305,14 @@ return {
 				variant = "main", -- auto, main, moon, or dawn
 				dark_variant = "main", -- main, moon, or dawn
 				dim_inactive_windows = false,
-				disable_background = true,
+				disable_background = false,
 				-- 	disable_nc_background = false,
 				-- 	disable_float_background = false,
 				-- extend_background_behind_borders = false,
 				styles = {
 					bold = true,
 					italic = false,
-					transparency = true,
+					transparency = false,
 				},
 				highlight_groups = {
 					ColorColumn = { bg = "#1C1C21" },
@@ -709,6 +714,25 @@ return {
 		config = function(_, opts)
 			require("tokyodark").setup(opts) -- calling setup is optional
 			vim.cmd([[colorscheme tokyodark]])
+		end,
+	},
+
+	-- NOTE:: fluoromachine
+
+	{
+		"maxmx03/fluoromachine.nvim",
+		lazy = false,
+		priority = 1000,
+		config = function()
+			local fm = require("fluoromachine")
+
+			fm.setup({
+				glow = true,
+				theme = "fluoromachine",
+				transparent = false,
+			})
+
+			vim.cmd.colorscheme("fluoromachine")
 		end,
 	},
 }

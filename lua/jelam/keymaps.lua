@@ -53,13 +53,25 @@ km.set("n", "<leader>ft", "<cmd>TodoTelescope<cr>", { desc = "Find todos" })
 km.set("n", "<leader>hl", "<cmd>HopLine<cr>", { desc = "Hop Line" })
 
 --Go Extended Keybinds
-km.set("n", "<leader>god", "<cmd>GoDebug<cr>", { desc = "Go Debugger: start" })
-km.set("n", "<leader>gods", "<cmd>GoDebug -s<cr>", { desc = "Go Debugger: stop" })
-km.set("n", "<leader>godr", "<cmd>GoDebug -r<cr>", { desc = "Go Debugger: run" })
-km.set("n", "<leader>godb", "<cmd>GoDebug -b<cr>", { desc = "Go Debugger: break point" })
-km.set("n", "<leader>gofs", "<cmd>GoFillStruct<cr>", { desc = "Go Fill: Struct" })
-km.set("n", "<leader>gofw", "<cmd>GoFillSwitch<cr>", { desc = "Go Fill: Switch" })
-km.set("n", "<leader>gor", "<cmd>GoIfErr<cr>", { desc = "Go Fill: If Error" })
+km.set("n", "<leader>gr", "<cmd>GoRun<cr>", { desc = "Go Run" })
+km.set("n", "<leader>gi", "<cmd>GoImport<cr>", { desc = "Go Import" })
+
+--Go: Test/Coverage Extended Keybinds
+km.set("n", "<leader>gtf", "<cmd>GoTestFunc<cr>", { desc = "Go Test Function" })
+km.set("n", "<leader>gtF", "<cmd>GoTestFile<cr>", { desc = "Go Test File" })
+km.set("n", "<leader>gc", "<cmd>GoCoverage<cr>", { desc = "Go Coverage" })
+
+--Go: Debug Extended Keybinds
+km.set("n", "<leader>gd", "<cmd>GoDebug<cr>", { desc = "Go Debugger: start" })
+km.set("n", "<leader>gds", "<cmd>GoDebug -s<cr>", { desc = "Go Debugger: stop" })
+km.set("n", "<leader>gdr", "<cmd>GoDebug -r<cr>", { desc = "Go Debugger: run" })
+km.set("n", "<leader>gdb", "<cmd>GoDebug -b<cr>", { desc = "Go Debugger: break point" })
+
+--Go: Fill Extended Keybinds
+km.set("n", "<leader>gat", "<cmd>GoAlt<cr>", { desc = "Go Alternate" })
+km.set("n", "<leader>gfs", "<cmd>GoFillStruct<cr>", { desc = "Go Fill Struct" })
+km.set("n", "<leader>gfw", "<cmd>GoFillSwitch<cr>", { desc = "Go Fill: Switch" })
+km.set("n", "<leader>gfe", "<cmd>GoIfErr<cr>", { desc = "Go Fill: If Error" })
 km.set(
 	"n",
 	"<leader>gofp",
@@ -87,4 +99,8 @@ vim.keymap.set("n", "<leader>zp", "[s", { silent = true, desc = "Previous misspe
 vim.keymap.set("n", "<leader>zf", "zg", { silent = true, desc = "Add word to spellfile" })
 vim.keymap.set("n", "<leader>zb", "zw", { silent = true, desc = "Mark word as incorrect" })
 
+-- Quick Fix
 km.set("n", "<Leader>qf", ":copen<CR>", { desc = "open quick fix" })
+
+-- Maximize/minimize a split
+km.set("n", "<leader>sm", "<cmd>MaximizerToggle<CR>", { desc = "Maximize/minimize a split" })

@@ -708,11 +708,12 @@ return {
 	-- NOTE:: tokyodark
 	{
 		"tiagovla/tokyodark.nvim",
+		priority = 1000,
 		opts = {
-			-- custom options here
+			transparent_background = true,
 		},
 		config = function(_, opts)
-			require("tokyodark").setup(opts) -- calling setup is optional
+			require("tokyodark").setup(opts)
 			vim.cmd([[colorscheme tokyodark]])
 		end,
 	},

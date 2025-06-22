@@ -201,15 +201,15 @@ return {
 		})
 
 		-- Setup handlers for all servers
-		mason_lspconfig.setup_handlers({
-			function(server_name)
-				local config = vim.tbl_deep_extend("force", {
-					capabilities = capabilities,
-				}, server_configs[server_name] or {})
-
-				lspconfig[server_name].setup(config)
-			end,
-		})
+		-- mason_lspconfig.setup_handlers({
+		-- 	function(server_name)
+		-- 		local config = vim.tbl_deep_extend("force", {
+		-- 			capabilities = capabilities,
+		-- 		}, server_configs[server_name] or {})
+		--
+		-- 		lspconfig[server_name].setup(config)
+		-- 	end,
+		-- })
 	end,
 }
 -- Mason is configured in mason.lua

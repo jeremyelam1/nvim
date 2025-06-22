@@ -1,5 +1,9 @@
 local km = vim.keymap
 
+-- Map jk to escape insert mode
+km.set("i", "jk", "<Esc>", { desc = "Exit insert mode" })
+km.set("i", "kj", "<Esc>", { desc = "Exit insert mode" })
+
 -- km.set("n", "<leader>ff", require("fzf-lua").files, { desc = "FZF Files" })
 km.set("n", "<leader>fr", require("fzf-lua").registers, { desc = "Registers" })
 km.set("n", "<leader>fm", require("fzf-lua").marks, { desc = "Marks" })

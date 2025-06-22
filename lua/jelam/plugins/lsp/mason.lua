@@ -67,7 +67,7 @@ return {
 				"shellcheck", -- shell script linter
 
 				-- debuggers
-				"delve", -- go debugger
+				"delve", -- go debugger (for GraphQL and Go)
 				"codelldb", -- debugger for C, C++, Rust
 
 				-- go tools

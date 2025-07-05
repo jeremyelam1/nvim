@@ -1,3 +1,4 @@
+-- Trouble.nvim plugin configuration for diagnostics and quickfix
 return {
   "folke/trouble.nvim",
   dependencies = { "nvim-tree/nvim-web-devicons", "folke/todo-comments.nvim" },

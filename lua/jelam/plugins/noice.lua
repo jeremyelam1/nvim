@@ -1,8 +1,9 @@
+-- Noice.nvim plugin configuration for enhanced UI
 return {
 	"folke/noice.nvim",
 	event = "VeryLazy",
 	opts = {
-		-- add any options here
+		-- Add any options here
 	},
 	dependencies = {
 		"MunifTanjim/nui.nvim",

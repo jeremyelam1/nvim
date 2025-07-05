@@ -1,3 +1,4 @@
+-- Treesj plugin configuration for splitting/joining code blocks
 return {
 	{
 		"Wansmer/treesj",

@@ -1,3 +1,4 @@
+-- Conform.nvim plugin configuration for code formatting
 return {
 	"stevearc/conform.nvim",
 	event = { "BufReadPre", "BufNewFile" },
@@ -28,6 +29,7 @@ return {
 			},
 		})
 
+		-- Format keymap
 		vim.keymap.set({ "n", "v" }, "<leader>mp", function()
 			conform.format({
 				lsp_fallback = true,

@@ -1,44 +1,44 @@
+-- Neovim Core Options Configuration
+
+-- Netrw settings
 vim.cmd("let g:netrw_liststyle = 3")
 
 local opt = vim.opt -- for conciseness
 
--- line numbers
-opt.relativenumber = true -- show relative line numbers
-opt.number = true -- shows absolute line number on cursor line (when relative number is on)
+-- Line numbers
+opt.relativenumber = true -- Show relative line numbers
+opt.number = true -- Show absolute line number on cursor line
 
--- tabs & indentation
-opt.tabstop = 2 -- 2 spaces for tabs (prettier default)
+-- Tabs & indentation
+opt.tabstop = 2 -- 2 spaces for tabs
 opt.shiftwidth = 2 -- 2 spaces for indent width
-opt.expandtab = true -- expand tab to spaces
-opt.autoindent = true -- copy indent from current line when starting new one
+opt.expandtab = true -- Expand tab to spaces
+opt.autoindent = true -- Copy indent from current line when starting new one
 
--- line wrapping
-opt.wrap = false -- disable line wrapping
+-- Line wrapping
+opt.wrap = false -- Disable line wrapping
 
--- search settings
-opt.ignorecase = true -- ignore case when searching
-opt.smartcase = true -- if you include mixed case in your search, assumes you want case-sensitive
+-- Search settings
+opt.ignorecase = true -- Ignore case when searching
+opt.smartcase = true -- Case-sensitive search when mixed case is used
 
--- cursor line
-opt.cursorline = true -- highlight the current cursor line
+-- Cursor line
+opt.cursorline = true -- Highlight the current cursor line
 
--- appearance
+-- Appearance
+opt.termguicolors = true -- Enable true color support
+opt.background = "dark" -- Set dark background for colorschemes
+opt.signcolumn = "yes" -- Show sign column to prevent text shifting
 
--- turn on termguicolors for nightfly colorscheme to work
--- (have to use iterm2 or any other true color terminal)
-opt.termguicolors = true
-opt.background = "dark" -- colorschemes that can be light or dark will be made dark
-opt.signcolumn = "yes" -- show sign column so that text doesn't shift
+-- Backspace
+opt.backspace = "indent,eol,start" -- Allow backspace on indent, end of line, or insert mode start
 
--- backspace
-opt.backspace = "indent,eol,start" -- allow backspace on indent, end of line or insert mode start position
+-- Clipboard
+opt.clipboard:append("unnamedplus") -- Use system clipboard as default register
 
--- clipboard
-opt.clipboard:append("unnamedplus") -- use system clipboard as default register
+-- Split windows
+opt.splitright = true -- Split vertical window to the right
+opt.splitbelow = true -- Split horizontal window to the bottom
 
--- split windows
-opt.splitright = true -- split vertical window to the right
-opt.splitbelow = true -- split horizontal window to the bottom
-
--- turn off swapfile
-opt.swapfile = false
+-- File handling
+opt.swapfile = false -- Disable swap files

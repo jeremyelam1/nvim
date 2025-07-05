@@ -1,5 +1,4 @@
--- uncomment code and and rename file to telescope.lua
--- will also need to comment or remove fzf-lua keybind in keybind.lua
+-- Telescope plugin configuration
 return {
 	"nvim-telescope/telescope.nvim",
 	branch = "0.1.x",

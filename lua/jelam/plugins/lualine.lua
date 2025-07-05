@@ -1,3 +1,4 @@
+-- Lualine.nvim plugin configuration for status line
 return {
 	"nvim-lualine/lualine.nvim",
 	dependencies = { "nvim-tree/nvim-web-devicons" },
@@ -5,6 +6,7 @@ return {
 		local lualine = require("lualine")
 		local lazy_status = require("lazy.status") -- to configure lazy pending updates count
 
+		-- Custom color palette
 		local colors = {
 			gold = "#FDB927",
 			purple = "#552583",
@@ -13,13 +15,13 @@ return {
 			violet = "#FF61EF",
 			yellow = "#FFDA7B",
 			red = "#FF4A4A",
-			-- fg = "#c3ccdc",
 			fg = "#CBE0F0",
-			-- bg = "#112638",
 			bg = "#011423",
 			inactive_bg = "#2c3043",
+			semilightgray = "#CBE0F0", -- Fixed undefined color reference
 		}
 
+		-- Custom theme configuration
 		local my_lualine_theme = {
 			normal = {
 				a = { bg = colors.purple, fg = colors.bg, gui = "bold" },
@@ -53,21 +55,21 @@ return {
 			},
 		}
 
-		-- configure lualine with modified theme
+		-- Configure lualine
 		lualine.setup({
 			options = {
 				theme = my_lualine_theme,
-				section_separators = { left = "", right = "" },
+				section_separators = { left = "", right = "" },
 				sections = {
 					lualine_a = {
-						{ "mode", separator = { left = "" }, right_padding = 2 },
+						{ "mode", separator = { left = "" }, right_padding = 2 },
 					},
 					lualine_b = { "filename", "branch" },
 					lualine_c = { "fileformat" },
 					lualine_x = {},
 					lualine_y = { "filetype", "progress" },
 					lualine_z = {
-						{ "location", separator = { right = "" }, left_padding = 2 },
+						{ "location", separator = { right = "" }, left_padding = 2 },
 					},
 				},
 			},

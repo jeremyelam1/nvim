@@ -1,77 +1,71 @@
+-- Plugin-specific Keymaps Configuration
+
 local km = vim.keymap
 
--- Map jk to escape insert mode
+-- Insert mode shortcuts
 km.set("i", "jk", "<Esc>", { desc = "Exit insert mode" })
 km.set("i", "kj", "<Esc>", { desc = "Exit insert mode" })
 
--- km.set("n", "<leader>ff", require("fzf-lua").files, { desc = "FZF Files" })
-km.set("n", "<leader>fr", require("fzf-lua").registers, { desc = "Registers" })
-km.set("n", "<leader>fm", require("fzf-lua").marks, { desc = "Marks" })
-km.set("n", "<leader>fk", require("fzf-lua").keymaps, { desc = "Keymaps" })
--- km.set("n", "<leader>fw", require("fzf-lua").live_grep, { desc = "FZF Grep" })
-km.set("n", "<leader>fb", require("fzf-lua").buffers, { desc = "FZF Buffers" })
--- km.set("n", "<leader>fj", require("fzf-lua").helptags, { desc = "Help Tags" })
--- km.set("n", "<leader>fgc", require("fzf-lua").git_bcommits, { desc = "Browse File Commits" })
--- km.set("n", "<leader>fgs", require("fzf-lua").git_status, { desc = "Git Status" })
-km.set("n", "<leader>fs", require("fzf-lua").spell_suggest, { desc = "Spelling Suggestions" })
--- km.set("n", "fd", require("fzf-lua").lsp_definitions, { desc = "Jump to Definition" })
-km.set(
-	"n",
-	"<leader>tb",
-	":lua require'fzf-lua'.lsp_document_symbols({winopts = {preview={wrap='wrap'}}})<cr>",
-	{ desc = "Document Symbols" }
-)
--- km.set("n", "<leader>fcr", require("fzf-lua").lsp_references, { desc = "LSP Refe:ences" })
--- km.set(
--- 	"n",
--- 	"<leader>cd",
--- 	":lua require'fzf-lua'.diagnostics_document({fzf_opts = { ['--wrap'] = true }})<cr>",
--- 	{ desc = "Document Diagnostics" }
--- )
---
--- km.set(
--- 	"n",
--- 	"<leader>fa",
--- 	":lua require'fzf-lua'.lsp_code_actions({ winopts = {relative='cursor',row=1.01, col=0, height=0.2, width=0.4} })<cr>",
--- 	{ desc = "Code Actions" }
--- )
+-- FZF-Lua keymaps (wrapped to avoid module not found error)
+local function setup_fzf_lua_keymaps()
+	local fzf_lua = require("fzf-lua")
+	km.set("n", "<leader>fr", fzf_lua.registers, { desc = "Registers" })
+	km.set("n", "<leader>fm", fzf_lua.marks, { desc = "Marks" })
+	km.set("n", "<leader>fk", fzf_lua.keymaps, { desc = "Keymaps" })
+	km.set("n", "<leader>fb", fzf_lua.buffers, { desc = "Buffers" })
+	km.set("n", "<leader>fs", fzf_lua.spell_suggest, { desc = "Spelling Suggestions" })
+	km.set(
+		"n",
+		"<leader>tb",
+		":lua require'fzf-lua'.lsp_document_symbols({winopts = {preview={wrap='wrap'}}})<cr>",
+		{ desc = "Document Symbols" }
+	)
+end
 
--- Auto-Session Keymaps
-km.set("n", "<leader>wr", "<cmd>SessionRestore<CR>", { desc = "Restore session for cwd" }) -- restore last workspace session for current directory
-km.set("n", "<leader>ws", "<cmd>SessionSave<CR>", { desc = "Save session for auto session root dir" }) -- save workspace session for current working directory
+-- Set up fzf-lua keymaps when plugin is loaded
+vim.api.nvim_create_autocmd("User", {
+	pattern = "LazyDone",
+	callback = function()
+		if pcall(require, "fzf-lua") then
+			setup_fzf_lua_keymaps()
+		end
+	end,
+})
 
-km.set("n", "<leader>ct", ":ThemeToggle<CR>", { desc = "Toggle theme selector" })
+-- Auto-Session keymaps
+km.set("n", "<leader>wr", "<cmd>SessionRestore<CR>", { desc = "Restore session for cwd" })
+km.set("n", "<leader>ws", "<cmd>SessionSave<CR>", { desc = "Save session for auto session root dir" })
 
--- Theme Keymaps
+-- Theme keymaps
 km.set("n", "<leader>ct", ":ThemeToggle<CR>", { desc = "Toggle through themes" })
 km.set("n", "<leader>cs", ":ThemeSelect<CR>", { desc = "Select theme from menu" })
 
--- Telescope Keybinds
+-- Telescope keymaps
 km.set("n", "<leader>ff", "<cmd>Telescope find_files<cr>", { desc = "Fuzzy find files in cwd" })
 km.set("n", "<leader>fe", "<cmd>Telescope oldfiles<cr>", { desc = "Fuzzy find recent files" })
 km.set("n", "<leader>fw", "<cmd>Telescope live_grep<cr>", { desc = "Find string in cwd" })
 km.set("n", "<leader>fc", "<cmd>Telescope grep_string<cr>", { desc = "Find string under cursor in cwd" })
 km.set("n", "<leader>ft", "<cmd>TodoTelescope<cr>", { desc = "Find todos" })
 
--- Hop Keybinds
+-- Hop keymaps
 km.set("n", "<leader>hl", "<cmd>HopLine<cr>", { desc = "Hop Line" })
 
---Go Extended Keybinds
+-- Go Extended keymaps
 km.set("n", "<leader>gr", "<cmd>GoRun<cr>", { desc = "Go Run" })
 km.set("n", "<leader>gi", "<cmd>GoImport<cr>", { desc = "Go Import" })
 
---Go: Test/Coverage Extended Keybinds
+-- Go Test/Coverage keymaps
 km.set("n", "<leader>gtf", "<cmd>GoTestFunc<cr>", { desc = "Go Test Function" })
 km.set("n", "<leader>gtF", "<cmd>GoTestFile<cr>", { desc = "Go Test File" })
 km.set("n", "<leader>gc", "<cmd>GoCoverage<cr>", { desc = "Go Coverage" })
 
---Go: Debug Extended Keybinds
+-- Go Debug keymaps
 km.set("n", "<leader>gd", "<cmd>GoDebug<cr>", { desc = "Go Debugger: start" })
 km.set("n", "<leader>gds", "<cmd>GoDebug -s<cr>", { desc = "Go Debugger: stop" })
 km.set("n", "<leader>gdr", "<cmd>GoDebug -r<cr>", { desc = "Go Debugger: run" })
 km.set("n", "<leader>gdb", "<cmd>GoDebug -b<cr>", { desc = "Go Debugger: break point" })
 
---Go: Fill Extended Keybinds
+-- Go Fill keymaps
 km.set("n", "<leader>gat", "<cmd>GoAlt<cr>", { desc = "Go Alternate" })
 km.set("n", "<leader>gfs", "<cmd>GoFillStruct<cr>", { desc = "Go Fill Struct" })
 km.set("n", "<leader>gfw", "<cmd>GoFillSwitch<cr>", { desc = "Go Fill: Switch" })
@@ -83,28 +77,29 @@ km.set(
 	{ desc = "change func foo(b int, a int, r int) -> func foo(b, a, r int)" }
 )
 
+-- Go Tag keymaps
 km.set("n", "<leader>gota", "<cmd>GoAddTag<cr>", { desc = "Go Tag: Add" })
 km.set("n", "<leader>gotr", "<cmd>GoRmTag<cr>", { desc = "Go Tag: Remove" })
 km.set("n", "<leader>gotc", "<cmd>GoClearTag<cr>", { desc = "Go Tag: Clear" })
 
--- Dap Keybinds
+-- DAP keymaps
 km.set("n", "<Leader>dt", "<CR>DapUiToggle<CR>", { desc = "Debug: UI Toggle" })
 km.set("n", "<Leader>db", ":DapToggleBreakpoint<CR>", { desc = "Debug: Break point" })
 km.set("n", "<Leader>dc", "<CR>DapContinue<CR>", { desc = "Debug: Continue" })
 km.set("n", "<Leader>dr", ":lua require('dapui').open({reset = true})<CR>", { desc = "Debug: Run" })
 
--- Yazi
+-- Yazi keymaps
 km.set("n", "<leader>-", "<cmd>Yazi<cr>", { desc = "Yazi: current file" })
 km.set("n", "<leader>cw", "<cmd>Yazi cwd<cr>", { desc = "Yazi: nvim's working directory" })
 
--- Spellcheck
-vim.keymap.set("n", "<leader>zn", "]s", { silent = true, desc = "Next misspelled word" })
-vim.keymap.set("n", "<leader>zp", "[s", { silent = true, desc = "Previous misspelled word" })
-vim.keymap.set("n", "<leader>zf", "zg", { silent = true, desc = "Add word to spellfile" })
-vim.keymap.set("n", "<leader>zb", "zw", { silent = true, desc = "Mark word as incorrect" })
+-- Spellcheck keymaps
+km.set("n", "<leader>zn", "]s", { silent = true, desc = "Next misspelled word" })
+km.set("n", "<leader>zp", "[s", { silent = true, desc = "Previous misspelled word" })
+km.set("n", "<leader>zf", "zg", { silent = true, desc = "Add word to spellfile" })
+km.set("n", "<leader>zb", "zw", { silent = true, desc = "Mark word as incorrect" })
 
 -- Quick Fix
-km.set("n", "<Leader>qf", ":copen<CR>", { desc = "open quick fix" })
+km.set("n", "<Leader>qf", ":copen<CR>", { desc = "Open quick fix" })
 
 -- Maximize/minimize a split
 km.set("n", "<leader>sm", "<cmd>MaximizerToggle<CR>", { desc = "Maximize/minimize a split" })

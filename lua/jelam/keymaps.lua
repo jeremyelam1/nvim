@@ -2,8 +2,7 @@
 
 local km = vim.keymap
 
--- Insert mode shortcuts
-km.set("i", "jk", "<Esc>", { desc = "Exit insert mode" })
+-- Insert mode shortcuts (jk is already defined in core/keymaps.lua)
 km.set("i", "kj", "<Esc>", { desc = "Exit insert mode" })
 
 -- FZF-Lua keymaps (wrapped to avoid module not found error)
@@ -83,20 +82,38 @@ km.set("n", "<leader>gotr", "<cmd>GoRmTag<cr>", { desc = "Go Tag: Remove" })
 km.set("n", "<leader>gotc", "<cmd>GoClearTag<cr>", { desc = "Go Tag: Clear" })
 
 -- DAP keymaps
-km.set("n", "<Leader>dt", "<CR>DapUiToggle<CR>", { desc = "Debug: UI Toggle" })
+km.set("n", "<Leader>dt", ":DapUiToggle<CR>", { desc = "Debug: UI Toggle" })
 km.set("n", "<Leader>db", ":DapToggleBreakpoint<CR>", { desc = "Debug: Break point" })
-km.set("n", "<Leader>dc", "<CR>DapContinue<CR>", { desc = "Debug: Continue" })
+km.set("n", "<Leader>dc", ":DapContinue<CR>", { desc = "Debug: Continue" })
 km.set("n", "<Leader>dr", ":lua require('dapui').open({reset = true})<CR>", { desc = "Debug: Run" })
 
--- Yazi keymaps
+-- Yazi keymaps (using <leader>y to avoid conflict with decrement)
 km.set("n", "<leader>-", "<cmd>Yazi<cr>", { desc = "Yazi: current file" })
-km.set("n", "<leader>cw", "<cmd>Yazi cwd<cr>", { desc = "Yazi: nvim's working directory" })
+km.set("n", "<leader>_", "<cmd>Yazi cwd<cr>", { desc = "Yazi: nvim's working directory" })
 
--- Spellcheck keymaps
-km.set("n", "<leader>zn", "]s", { silent = true, desc = "Next misspelled word" })
-km.set("n", "<leader>zp", "[s", { silent = true, desc = "Previous misspelled word" })
-km.set("n", "<leader>zf", "zg", { silent = true, desc = "Add word to spellfile" })
-km.set("n", "<leader>zb", "zw", { silent = true, desc = "Mark word as incorrect" })
+-- Enhanced spell check keymaps
+km.set("n", "<leader>sn", "]s", { silent = true, desc = "Next misspelled word" })
+km.set("n", "<leader>sp", "[s", { silent = true, desc = "Previous misspelled word" })
+km.set("n", "<leader>sa", "zg", { silent = true, desc = "Add word to spellfile" })
+km.set("n", "<leader>sb", "zw", { silent = true, desc = "Mark word as incorrect" })
+km.set("n", "<leader>ss", "z=", { silent = true, desc = "Suggest corrections" })
+km.set("n", "<leader>st", function()
+	vim.opt_local.spell = not vim.opt_local.spell:get()
+	if vim.opt_local.spell:get() then
+		vim.opt_local.spelllang = { "en_us", "programming" }
+	end
+	print("Spell check " .. (vim.opt_local.spell:get() and "enabled" or "disabled"))
+end, { desc = "Toggle spell check" })
+km.set("n", "<leader>sl", function()
+	vim.ui.select({ "en_us", "en_gb", "programming" }, {
+		prompt = "Select spell language: ",
+	}, function(choice)
+		if choice then
+			vim.opt_local.spelllang = choice
+			print("Spell language set to: " .. choice)
+		end
+	end)
+end, { desc = "Select spell language" })
 
 -- Quick Fix
 km.set("n", "<Leader>qf", ":copen<CR>", { desc = "Open quick fix" })

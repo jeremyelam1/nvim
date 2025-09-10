@@ -71,8 +71,7 @@ return {
 			callback = setup_lsp_keymaps,
 		})
 
-		-- used to enable autocompletion (assign to every lsp server config)
-		local capabilities = cmp_nvim_lsp.default_capabilities()
+		-- capabilities already defined above on line 17
 
 		-- Change the Diagnostic symbols in the sign column (gutter)
 		-- (not in youtube nvim video)
@@ -172,44 +171,48 @@ return {
 					},
 				},
 			},
-		}
-
-		-- Configure Mason
-		require("mason").setup({
-			ui = {
-				border = "rounded",
-				icons = {
-					package_installed = "✓",
-					package_pending = "➜",
-					package_uninstalled = "✗",
+			ltex = {
+				filetypes = { "markdown", "text", "gitcommit", "tex" },
+				settings = {
+					ltex = {
+						language = "en-US",
+						diagnosticSeverity = "information",
+						sentenceCacheSize = 2000,
+						additionalRules = {
+							enablePickyRules = true,
+							motherTongue = "en-US",
+						},
+						disabledRules = {
+							-- Disable rules that are too aggressive
+							["en-US"] = { "MORFOLOGIK_RULE_EN_US" },
+						},
+						dictionary = {
+							["en-US"] = {
+								-- Add custom words here
+								"nvim", "lua", "lsp", "treesitter", "config"
+							},
+						},
+					},
 				},
 			},
-		})
+		}
 
-		-- Configure Mason-LSPConfig
-		require("mason-lspconfig").setup({
-			ensure_installed = {
-				"gopls",
-				"lua_ls",
-				"tsserver",
-				"html",
-				"cssls",
-				"jsonls",
-				"rust_analyzer",
-			},
-			automatic_installation = true,
-		})
+		-- Mason setup is handled in mason.lua - avoid duplication
+		-- Setup individual servers with their configurations
+		mason_lspconfig.setup_handlers({
+			function(server_name)
+				local config = vim.tbl_deep_extend("force", {
+					capabilities = capabilities,
+				}, server_configs[server_name] or {})
 
-		-- Setup handlers for all servers
-		-- mason_lspconfig.setup_handlers({
-		-- 	function(server_name)
-		-- 		local config = vim.tbl_deep_extend("force", {
-		-- 			capabilities = capabilities,
-		-- 		}, server_configs[server_name] or {})
-		--
-		-- 		lspconfig[server_name].setup(config)
-		-- 	end,
-		-- })
+				-- Skip gopls - it's handled by go.nvim
+				if server_name == "gopls" then
+					return
+				end
+
+				lspconfig[server_name].setup(config)
+			end,
+		})
 	end,
 }
 -- Mason is configured in mason.lua

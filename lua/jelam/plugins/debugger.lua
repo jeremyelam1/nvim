@@ -13,45 +13,70 @@ return {
 			require("dapui").setup()
 			require("nvim-dap-virtual-text").setup()
 
-			-- Custom setup for Go debugging to fix the ${workspaceRoot} issue
+			-- Custom setup for Go debugging with goroutine support
 			require("dap-go").setup({
-				-- dap-go configuration
+				-- dap-go configuration with goroutine debugging
 				dap_configurations = {
 					{
 						type = "go",
-						name = "Debug",
+						name = "Debug Current File",
 						request = "launch",
 						program = "${file}",
+						buildFlags = "-gcflags='all=-N -l'",
+						showGoroutineStack = true,
 					},
 					{
 						type = "go",
 						name = "Debug Package",
 						request = "launch",
 						program = "${fileDirname}",
+						buildFlags = "-gcflags='all=-N -l'",
+						showGoroutineStack = true,
 					},
 					{
 						type = "go",
 						name = "Debug Main Package",
 						request = "launch",
-						program = "./cmd/server", -- Adjust this path to your main package
+						program = function()
+							if vim.fn.filereadable("./cmd/server/main.go") == 1 then
+								return "./cmd/server/main.go"
+							elseif vim.fn.filereadable("./main.go") == 1 then
+								return "./main.go"
+							end
+							return vim.fn.input("Path to main.go: ", "", "file")
+						end,
+						buildFlags = "-gcflags='all=-N -l'",
+						showGoroutineStack = true,
 					},
 					{
 						type = "go",
-						name = "Debug Main",
+						name = "Debug Test",
 						request = "launch",
-						-- Instead of ${workspaceRoot}/cmd/server/main.go
-						program = function()
-							return vim.fn.getcwd() .. "/cmd/server/main.go"
+						mode = "test",
+						program = "${file}",
+						buildFlags = "-gcflags='all=-N -l'",
+						showGoroutineStack = true,
+					},
+					{
+						type = "go",
+						name = "Attach to Process",
+						request = "attach",
+						mode = "remote",
+						port = function()
+							return tonumber(vim.fn.input("Delve port: ", "2345"))
 						end,
+						host = "127.0.0.1",
+						showGoroutineStack = true,
 					},
 				},
-				-- Ensure delve is properly configured
+				-- Ensure delve is properly configured with goroutine support
 				delve = {
-					path = "dlv", -- Path to the delve command
+					path = "dlv",
 					initialize_timeout_sec = 20,
 					port = "${port}",
 					args = {},
-					build_flags = "",
+					build_flags = "-gcflags='all=-N -l'",
+					detached = false,
 				},
 			})
 
@@ -185,6 +210,20 @@ return {
 			vim.keymap.set("n", "<leader>du", function()
 				dapui.toggle()
 			end, { desc = "Toggle UI" })
+
+			-- Goroutine debugging keymaps
+			vim.keymap.set("n", "<leader>dgg", function()
+				require("dap-go").debug_goroutines()
+			end, { desc = "Debug Goroutines" })
+
+			vim.keymap.set("n", "<leader>dgr", function()
+				local dap_go = require("dap-go")
+				if dap_go.debug_goroutines then
+					dap_go.debug_goroutines()
+				else
+					vim.notify("Goroutine debugging not available", vim.log.levels.WARN)
+				end
+			end, { desc = "Show Goroutine Stack" })
 
 			-- GraphQL specific debug commands (Go)
 			vim.keymap.set("n", "<leader>dgl", function()

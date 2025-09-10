@@ -1,27 +1,23 @@
--- vim.cmd("colorscheme eldritch")
--- vim.cmd("colorscheme rose-pine")
--- vim.cmd("colorscheme gruvbox")
--- vim.cmd("colorscheme kanagawa")
--- vim.cmd("colorscheme solarized-osaka")
--- vim.cmd("colorscheme tokyonight")
--- vim.cmd("colorscheme catppuccin")
--- vim.cmd("colorscheme dracula")
--- vim.cmd("colorscheme nightfox")
--- vim.cmd("colorscheme monokai-pro")
--- vim.cmd("colorscheme cyberdream")
--- vim.cmd("colorscheme onedark")
 vim.cmd("colorscheme tokyodark")
--- vim.cmd("colorscheme fluoromachine")
 
-vim.api.nvim_set_hl(0, "TelescopePromptNormal", { bg = "none" })
-vim.api.nvim_set_hl(0, "TelescopeResultsNormal", { bg = "none" })
-vim.api.nvim_set_hl(0, "TelescopePreviewNormal", { bg = "none" })
+-- Transparent background overrides
+local function setup_transparent_highlights()
+	local highlights = {
+		"TelescopePromptNormal",
+		"TelescopeResultsNormal", 
+		"TelescopePreviewNormal",
+		"TelescopePromptBorder",
+		"TelescopeResultsBorder",
+		"TelescopePreviewBorder", 
+		"TelescopeNormal",
+		"TelescopeBorder",
+		"NvimTreeNormal",
+		"NvimTreeNormalNC",
+	}
+	
+	for _, highlight in ipairs(highlights) do
+		vim.api.nvim_set_hl(0, highlight, { bg = "none" })
+	end
+end
 
--- Border and Title (optional, for aesthetic consistency)
-vim.api.nvim_set_hl(0, "TelescopePromptBorder", { bg = "none" })
-vim.api.nvim_set_hl(0, "TelescopeResultsBorder", { bg = "none" })
-vim.api.nvim_set_hl(0, "TelescopePreviewBorder", { bg = "none" })
-vim.api.nvim_set_hl(0, "TelescopeNormal", { bg = "none" })
-vim.api.nvim_set_hl(0, "TelescopeBorder", { bg = "none" })
-vim.api.nvim_set_hl(0, "NvimTreeNormal", { bg = "none" })
-vim.api.nvim_set_hl(0, "NvimTreeNormalNC", { bg = "none" })
+setup_transparent_highlights()

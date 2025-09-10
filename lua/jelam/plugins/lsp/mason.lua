@@ -39,9 +39,10 @@ return {
 				"graphql",
 				"emmet_ls",
 				"prismals",
-				"ts_ls",
+				"tsserver",
 				"jsonls",
 				"rust_analyzer",
+				"ltex",  -- Advanced spell/grammar checking
 			},
 			-- auto-install configured servers (with lspconfig)
 			automatic_installation = true,

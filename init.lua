@@ -6,7 +6,11 @@ require("jelam.keymaps")
 
 -- Undo settings
 vim.opt.undofile = true
-vim.opt.undodir = os.getenv("HOME") .. "/.config/nvim/undo"
+local undo_dir = os.getenv("HOME") .. "/.config/nvim/undo"
+if vim.fn.isdirectory(undo_dir) == 0 then
+	vim.fn.mkdir(undo_dir, "p")
+end
+vim.opt.undodir = undo_dir
 vim.opt.undolevels = 1000
 vim.opt.undoreload = 10000
 

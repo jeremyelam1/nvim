@@ -197,22 +197,9 @@ return {
 			},
 		}
 
-		-- Mason setup is handled in mason.lua - avoid duplication
-		-- Setup individual servers with their configurations
-		mason_lspconfig.setup_handlers({
-			function(server_name)
-				local config = vim.tbl_deep_extend("force", {
-					capabilities = capabilities,
-				}, server_configs[server_name] or {})
-
-				-- Skip gopls - it's handled by go.nvim
-				if server_name == "gopls" then
-					return
-				end
-
-				lspconfig[server_name].setup(config)
-			end,
-		})
+		-- Store server configurations globally for mason.lua to use
+		_G.lsp_server_configs = server_configs
+		_G.lsp_capabilities = capabilities
 	end,
 }
 -- Mason is configured in mason.lua

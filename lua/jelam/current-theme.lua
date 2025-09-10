@@ -4,17 +4,17 @@ vim.cmd("colorscheme tokyodark")
 local function setup_transparent_highlights()
 	local highlights = {
 		"TelescopePromptNormal",
-		"TelescopeResultsNormal", 
+		"TelescopeResultsNormal",
 		"TelescopePreviewNormal",
 		"TelescopePromptBorder",
 		"TelescopeResultsBorder",
-		"TelescopePreviewBorder", 
+		"TelescopePreviewBorder",
 		"TelescopeNormal",
 		"TelescopeBorder",
 		"NvimTreeNormal",
 		"NvimTreeNormalNC",
 	}
-	
+
 	for _, highlight in ipairs(highlights) do
 		vim.api.nvim_set_hl(0, highlight, { bg = "none" })
 	end

@@ -8,8 +8,7 @@ return {
 		"rcarriga/nvim-dap-ui",
 		"theHamsta/nvim-dap-virtual-text",
 	},
-	-- Optimize loading strategy
-	event = { "BufReadPre", "BufNewFile" },
+	-- Optimize loading strategy - only use ft for better performance
 	ft = { "go", "gomod", "gowork", "gotmpl" },
 	build = ':lua require("go.install").update_all_sync()',
 	config = function()
@@ -82,7 +81,7 @@ return {
 			lint_prompt_style = "vt",
 			lint_on_save = true,
 			linter = "golangci-lint",
-			linter_flags = "--enable-all",
+			linter_flags = "--fast", -- Use --fast instead of --enable-all for better performance
 			fmt_on_save = true, -- Let go.nvim handle formatting
 
 			-- DAP settings
@@ -153,17 +152,29 @@ return {
 					cwd = vim.fn.getcwd(),
 					showGoroutineStack = true,
 				},
+				{
+					type = "go",
+					name = "Attach to Process",
+					request = "attach",
+					mode = "remote",
+					remotePath = vim.fn.getcwd(),
+					port = function()
+						return tonumber(vim.fn.input("Delve port: ", "2345"))
+					end,
+					host = "127.0.0.1",
+					showGoroutineStack = true,
+				},
 			},
 
 			-- Testing settings
 			test_runner = "go",
 			run_in_floaterm = true,
-
 			test_timeout = "30s",
 			test_popup = true,
 			test_popup_width = 80,
 			test_popup_height = 10,
 			verbose_tests = true,
+			test_efm = true, -- Enable error format for better test output parsing
 
 			-- Tags settings
 			tags_name = "json",
@@ -222,8 +233,14 @@ return {
 			diagnostic = {
 				hdlr = true, -- Let go.nvim handle diagnostics
 				underline = true,
-				virtual_text = { space = 0, prefix = "■" },
+				virtual_text = { 
+					space = 0, 
+					prefix = "■",
+					source = "if_many", -- Show diagnostic source if multiple sources
+				},
 				signs = true,
+				update_in_insert = false, -- Don't show diagnostics in insert mode
+				severity_sort = true, -- Sort by severity
 			},
 		})
 
@@ -353,30 +370,54 @@ return {
 			end,
 		})
 
-		-- Set up formatting on save
+		-- Set up formatting on save with error handling
 		vim.api.nvim_create_autocmd("BufWritePre", {
 			pattern = { "*.go" },
 			callback = function()
-				-- Let go.nvim handle imports and formatting
-				require("go.format").goimport()
+				-- Let go.nvim handle imports and formatting with error handling
+				local ok, err = pcall(function()
+					require("go.format").goimport()
+				end)
+				if not ok then
+					vim.notify("Go format failed: " .. tostring(err), vim.log.levels.WARN)
+				end
 			end,
 		})
 
-		-- Override gopls setup in lspconfig
-		-- This will be called by mason-lspconfig
-		local old_gopls_setup = lspconfig.gopls.setup
-		lspconfig.gopls.setup = function(user_config)
-			-- Don't do anything - go.nvim will handle gopls setup
-			vim.notify("go.nvim is handling gopls configuration", vim.log.levels.INFO)
-		end
+		-- Prevent mason from setting up gopls since go.nvim handles it
+		-- This is now handled in mason.lua with the skip logic
 
 		-- Set up statusline integration if available
 		if package.loaded["lualine"] then
 			-- Can be used in lualine to show Go version
 			_G.go_version = function()
-				local version = vim.fn.system("go version"):match("go([%d%.]+)")
+				local version = vim.fn.system("go version 2>/dev/null"):match("go([%d%.]+)")
 				return version and "Go " .. version or ""
 			end
 		end
+
+		-- Add additional Go-specific commands
+		vim.api.nvim_create_user_command("GoModTidy", function()
+			vim.cmd("!go mod tidy")
+		end, { desc = "Run go mod tidy" })
+
+		vim.api.nvim_create_user_command("GoModDownload", function()
+			vim.cmd("!go mod download")
+		end, { desc = "Run go mod download" })
+
+		vim.api.nvim_create_user_command("GoVet", function()
+			vim.cmd("!go vet ./...")
+		end, { desc = "Run go vet on all packages" })
+
+		-- Better integration with existing diagnostics
+		vim.api.nvim_create_autocmd("FileType", {
+			pattern = "go",
+			callback = function()
+				-- Set Go-specific options
+				vim.bo.expandtab = false
+				vim.bo.tabstop = 4
+				vim.bo.shiftwidth = 4
+			end,
+		})
 	end,
 }

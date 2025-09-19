@@ -82,30 +82,29 @@ return {
 			start_delay = 3000, -- 3 second delay
 		})
 
-		-- Setup handlers for LSP servers (called after mason-lspconfig is ready)
-		mason_lspconfig.setup_handlers({
-			-- Default handler for all servers
-			function(server_name)
-				-- Get capabilities from lspconfig.lua if available
-				local capabilities = _G.lsp_capabilities
-				local server_configs = _G.lsp_server_configs or {}
-				
-				if not capabilities then
-					local cmp_nvim_lsp = require("cmp_nvim_lsp")
-					capabilities = cmp_nvim_lsp.default_capabilities()
-				end
-
-				local config = vim.tbl_deep_extend("force", {
-					capabilities = capabilities,
-				}, server_configs[server_name] or {})
-
+		-- Setup LSP servers after mason-lspconfig is ready
+		-- Use vim.schedule to ensure lspconfig.lua has run first
+		vim.schedule(function()
+			local lspconfig = require("lspconfig")
+			local cmp_nvim_lsp = require("cmp_nvim_lsp")
+			
+			-- Get capabilities and server configs from lspconfig.lua if available
+			local capabilities = _G.lsp_capabilities or cmp_nvim_lsp.default_capabilities()
+			local server_configs = _G.lsp_server_configs or {}
+			
+			-- Get all installed servers
+			local installed_servers = mason_lspconfig.get_installed_servers()
+			
+			for _, server_name in ipairs(installed_servers) do
 				-- Skip gopls - it's handled by go.nvim
-				if server_name == "gopls" then
-					return
+				if server_name ~= "gopls" then
+					local config = vim.tbl_deep_extend("force", {
+						capabilities = capabilities,
+					}, server_configs[server_name] or {})
+					
+					lspconfig[server_name].setup(config)
 				end
-
-				require("lspconfig")[server_name].setup(config)
-			end,
-		})
+			end
+		end)
 	end,
 }

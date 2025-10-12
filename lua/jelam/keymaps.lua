@@ -41,6 +41,8 @@ km.set("n", "<leader>ct", ":ThemeToggle<CR>", { desc = "Toggle theme selector" }
 -- Theme Keymaps
 km.set("n", "<leader>ct", ":ThemeToggle<CR>", { desc = "Toggle through themes" })
 km.set("n", "<leader>cs", ":ThemeSelect<CR>", { desc = "Select theme from menu" })
+km.set("n", "<leader>co", ":OmarchySync<CR>", { desc = "Sync with Omarchy theme" })
+km.set("n", "<leader>cO", ":OmarchySyncColors<CR>", { desc = "Sync colors from Omarchy" })
 
 -- Telescope Keybinds
 km.set("n", "<leader>ff", "<cmd>Telescope find_files<cr>", { desc = "Fuzzy find files in cwd" })

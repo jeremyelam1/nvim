@@ -20,6 +20,7 @@ local function apply_omarchy_theme()
 	end
 
 	local colorscheme_name = nil
+	local colorscheme_func = nil
 
 	if theme_spec[1] then
 		if type(theme_spec[1]) == "string" then
@@ -28,15 +29,32 @@ local function apply_omarchy_theme()
 				colorscheme_name = "bamboo"
 			end
 		elseif theme_spec[1].opts and theme_spec[1].opts.colorscheme then
-			colorscheme_name = theme_spec[1].opts.colorscheme
+			if type(theme_spec[1].opts.colorscheme) == "function" then
+				colorscheme_func = theme_spec[1].opts.colorscheme
+			else
+				colorscheme_name = theme_spec[1].opts.colorscheme
+			end
 		end
 	end
 
 	if theme_spec[2] and theme_spec[2].opts and theme_spec[2].opts.colorscheme then
-		colorscheme_name = theme_spec[2].opts.colorscheme
+		if type(theme_spec[2].opts.colorscheme) == "function" then
+			colorscheme_func = theme_spec[2].opts.colorscheme
+		else
+			colorscheme_name = theme_spec[2].opts.colorscheme
+		end
 	end
 
-	if colorscheme_name then
+	if colorscheme_func then
+		vim.defer_fn(function()
+			local success = pcall(colorscheme_func)
+			if success then
+				local colors_module = require("jelam.utils.omarchy-colors")
+				colors_module.sync_colors_from_theme()
+				vim.notify("Synced to Omarchy custom theme", vim.log.levels.INFO)
+			end
+		end, 200)
+	elseif colorscheme_name then
 		vim.defer_fn(function()
 			local success = pcall(vim.cmd.colorscheme, colorscheme_name)
 			if success then

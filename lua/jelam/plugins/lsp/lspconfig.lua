@@ -67,13 +67,28 @@ return {
 		})
 
 		local signs = { Error = " ", Warn = " ", Hint = "󰠠 ", Info = " " }
-		for type, icon in pairs(signs) do
-			local hl = "DiagnosticSign" .. type
-			vim.fn.sign_define(hl, { text = icon, texthl = hl, numhl = "" })
-		end
+		vim.diagnostic.config({
+			signs = {
+				text = {
+					[vim.diagnostic.severity.ERROR] = signs.Error,
+					[vim.diagnostic.severity.WARN] = signs.Warn,
+					[vim.diagnostic.severity.HINT] = signs.Hint,
+					[vim.diagnostic.severity.INFO] = signs.Info,
+				},
+			},
+			virtual_text = false,
+			virtual_lines = false,
+			float = {
+				source = "if_many",
+				border = "rounded",
+			},
+			severity_sort = true,
+			update_in_insert = false,
+		})
 
 		vim.lsp.config("*", {
 			capabilities = capabilities,
+			root_markers = { ".git" },
 		})
 
 		vim.lsp.config.svelte = {
@@ -124,22 +139,7 @@ return {
 			},
 		}
 
-		vim.lsp.config.rust_analyzer = {
-			capabilities = capabilities,
-			settings = {
-				["rust-analyzer"] = {
-					checkOnSave = {
-						command = "clippy",
-					},
-					cargo = {
-						allFeatures = true,
-					},
-					procMacro = {
-						enable = true,
-					},
-				},
-			},
-		}
+
 
 		vim.lsp.config.tsserver = {
 			capabilities = capabilities,
@@ -169,33 +169,6 @@ return {
 			},
 		}
 
-		require("mason").setup({
-			ui = {
-				border = "rounded",
-				icons = {
-					package_installed = "✓",
-					package_pending = "➜",
-					package_uninstalled = "✗",
-				},
-			},
-		})
 
-		require("mason-lspconfig").setup({
-			ensure_installed = {
-				"gopls",
-				"lua_ls",
-				"tsserver",
-				"html",
-				"cssls",
-				"jsonls",
-				"rust_analyzer",
-			},
-			automatic_installation = true,
-		})
-
-		local mason_lspconfig = require("mason-lspconfig")
-		for _, server_name in ipairs(mason_lspconfig.get_installed_servers()) do
-			vim.lsp.enable(server_name)
-		end
 	end,
 }

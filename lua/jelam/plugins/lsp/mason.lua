@@ -27,25 +27,31 @@ return {
 			max_concurrent_installers = 10,
 		})
 
-		mason_lspconfig.setup({
-			-- list of servers for mason to install
-			ensure_installed = {
-				"gopls",
-				"html",
-				"cssls",
-				"tailwindcss",
-				"svelte",
-				"lua_ls",
-				"graphql",
-				"emmet_ls",
-				"prismals",
-				"ts_ls",
-				"jsonls",
-				"rust_analyzer",
-			},
-			-- auto-install configured servers (with lspconfig)
-			automatic_installation = true,
-		})
+	mason_lspconfig.setup({
+		-- list of servers for mason to install
+		ensure_installed = {
+			"gopls",
+			"html",
+			"cssls",
+			"tailwindcss",
+			"svelte",
+			"lua_ls",
+			"graphql",
+			"emmet_ls",
+			"prismals",
+			"ts_ls",
+			"jsonls",
+			"rust_analyzer",
+		},
+		automatic_installation = true,
+		handlers = {
+			function(server_name)
+				if server_name ~= "rust_analyzer" then
+					vim.lsp.enable(server_name)
+				end
+			end,
+		},
+	})
 
 		mason_tool_installer.setup({
 			ensure_installed = {
@@ -58,7 +64,6 @@ return {
 				"goimports", -- go imports formatter
 				"gofumpt", -- go formatter
 				"golines", -- line length formatter for go
-				"rustfmt", -- rust formatter
 
 				-- linters
 				"pylint", -- python linter

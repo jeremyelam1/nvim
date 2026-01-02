@@ -28,7 +28,6 @@ return {
 		})
 
 	mason_lspconfig.setup({
-		-- list of servers for mason to install
 		ensure_installed = {
 			"gopls",
 			"html",
@@ -41,14 +40,11 @@ return {
 			"prismals",
 			"ts_ls",
 			"jsonls",
-			"rust_analyzer",
 		},
 		automatic_installation = true,
 		handlers = {
 			function(server_name)
-				if server_name ~= "rust_analyzer" then
-					vim.lsp.enable(server_name)
-				end
+				vim.lsp.enable(server_name)
 			end,
 		},
 	})

@@ -6,7 +6,7 @@ return {
     "nvim-lua/plenary.nvim",
     "mfussenegger/nvim-dap",
   },
-  config = function()
+  init = function()
     local capabilities = require("cmp_nvim_lsp").default_capabilities()
 
     vim.g.rustaceanvim = {
@@ -14,6 +14,7 @@ return {
         capabilities = capabilities,
         on_attach = function(client, bufnr)
           client.server_capabilities.semanticTokensProvider = nil
+          client.server_capabilities.inlayHintProvider = nil
           vim.lsp.handlers["textDocument/publishDiagnostics"] = vim.lsp.with(
             vim.lsp.diagnostic.on_publish_diagnostics, {
               update_in_insert = false,

@@ -14,13 +14,9 @@ return {
 	build = ':lua require("go.install").update_all_sync()',
 	config = function()
 		local go = require("go")
-		local lspconfig = require("lspconfig")
-		local util = require("lspconfig.util")
 
-		-- Extract gopls settings from lspconfig
 		local function get_gopls_settings()
-			-- Default settings that match our lspconfig
-			local default_settings = {
+			return {
 				analyses = {
 					unusedparams = true,
 					shadow = true,
@@ -56,24 +52,14 @@ return {
 					rangeVariableTypes = true,
 				},
 			}
-
-			-- Try to get settings from lspconfig if it's already set up
-			if lspconfig.gopls and lspconfig.gopls.get_config then
-				local current_config = lspconfig.gopls.get_config(0) or {}
-				if current_config.settings and current_config.settings.gopls then
-					-- Merge with defaults, prioritizing existing settings
-					return vim.tbl_deep_extend("force", default_settings, current_config.settings.gopls)
-				end
-			end
-
-			return default_settings
 		end
 
-		-- Set up go.nvim with enhanced configuration
-		go.setup({
-			-- Core settings
-			disable_defaults = false,
-			go_alternate_mode = "edit",
+	-- Set up go.nvim with enhanced configuration
+	go.setup({
+		-- Core settings
+		disable_defaults = false,
+		go_alternate_mode = "edit",
+		lsp_cfg = false, -- Disable go.nvim's LSP management, we configure gopls directly
 
 			-- Formatting and linting
 			formatter = "gofumpt", -- Primary formatter
@@ -238,21 +224,21 @@ return {
 				border = "rounded",
 			},
 
-			-- Inlay hints
-			lsp_inlay_hints = {
-				enable = true,
+		-- Inlay hints - disabled in favor of native Neovim inlay hints
+		lsp_inlay_hints = {
+			enable = false,
 
-				style = "inlay",
+			style = "inlay",
 
-				show_variable_name = true,
+			show_variable_name = true,
 
-				parameter_hints_prefix = "󰊕 ",
-				show_parameter_hints = true,
+			parameter_hints_prefix = "󰊕 ",
+			show_parameter_hints = true,
 
-				other_hints_prefix = "=> ",
+			other_hints_prefix = "=> ",
 
-				highlight = "Comment",
-			},
+			highlight = "Comment",
+		},
 
 			-- Gopls settings - we'll take control here
 			gopls_cmd = { "gopls" },
@@ -376,13 +362,15 @@ return {
 			end,
 		})
 
-		-- Override gopls setup in lspconfig
-		-- This will be called by mason-lspconfig
-		local old_gopls_setup = lspconfig.gopls.setup
-		lspconfig.gopls.setup = function(user_config)
-			-- Don't do anything - go.nvim will handle gopls setup
-			vim.notify("go.nvim is handling gopls configuration", vim.log.levels.INFO)
-		end
+	-- Configure gopls directly via lspconfig for inlay hints to work properly
+	-- go.nvim's gopls_settings don't get applied correctly, so we set it here
+	vim.lsp.config.gopls = {
+		capabilities = require("cmp_nvim_lsp").default_capabilities(),
+		cmd = { "gopls" },
+		settings = {
+			gopls = get_gopls_settings(),
+		},
+	}
 
 		-- Set up statusline integration if available
 		if package.loaded["lualine"] then

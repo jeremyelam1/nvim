@@ -7,7 +7,8 @@ return {
 			"nvim-neotest/nvim-nio",
 		},
 		config = function()
-			local dap, dapui = require("dap"), require("dapui")
+			local dap = require("dap")
+			local dapui = require("dapui")
 
 			require("dapui").setup()
 
@@ -65,10 +66,12 @@ return {
 				dapui.close()
 			end
 
-			vim.fn.sign_define(
-				"DapBreakpoint",
-				{ text = "⏺", texthl = "DapBreakpoint", linehl = "DapBreakpoint", numhl = "DapBreakpoint" }
-			)
+		vim.fn.sign_define("DapBreakpoint", {
+			text = "⏺",
+			texthl = "DapBreakpoint",
+			linehl = "DapBreakpoint",
+			numhl = "DapBreakpoint",
+		})
 		end,
 	},
 	{

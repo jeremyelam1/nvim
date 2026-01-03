@@ -2,6 +2,7 @@ require("jelam.core")
 require("jelam.lazy")
 require("jelam.current-theme")
 require("jelam.keymaps")
+require("jelam.fix-diagnostics")
 vim.opt.undofile = true
 vim.opt.undodir = os.getenv("HOME") .. "/.config/nvim/undo"
 vim.opt.undolevels = 1000

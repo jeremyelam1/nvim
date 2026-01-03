@@ -54,11 +54,12 @@ return {
 			}
 		end
 
-		-- Set up go.nvim with enhanced configuration
-		go.setup({
-			-- Core settings
-			disable_defaults = false,
-			go_alternate_mode = "edit",
+	-- Set up go.nvim with enhanced configuration
+	go.setup({
+		-- Core settings
+		disable_defaults = false,
+		go_alternate_mode = "edit",
+		lsp_cfg = false, -- Disable go.nvim's LSP management, we configure gopls directly
 
 			-- Formatting and linting
 			formatter = "gofumpt", -- Primary formatter
@@ -223,21 +224,21 @@ return {
 				border = "rounded",
 			},
 
-			-- Inlay hints
-			lsp_inlay_hints = {
-				enable = true,
+		-- Inlay hints - disabled in favor of native Neovim inlay hints
+		lsp_inlay_hints = {
+			enable = false,
 
-				style = "inlay",
+			style = "inlay",
 
-				show_variable_name = true,
+			show_variable_name = true,
 
-				parameter_hints_prefix = "󰊕 ",
-				show_parameter_hints = true,
+			parameter_hints_prefix = "󰊕 ",
+			show_parameter_hints = true,
 
-				other_hints_prefix = "=> ",
+			other_hints_prefix = "=> ",
 
-				highlight = "Comment",
-			},
+			highlight = "Comment",
+		},
 
 			-- Gopls settings - we'll take control here
 			gopls_cmd = { "gopls" },
@@ -361,14 +362,15 @@ return {
 			end,
 		})
 
-		vim.schedule(function()
-			vim.lsp.config.gopls = {
-				capabilities = require("cmp_nvim_lsp").default_capabilities(),
-				settings = {
-					gopls = get_gopls_settings(),
-				},
-			}
-		end)
+	-- Configure gopls directly via lspconfig for inlay hints to work properly
+	-- go.nvim's gopls_settings don't get applied correctly, so we set it here
+	vim.lsp.config.gopls = {
+		capabilities = require("cmp_nvim_lsp").default_capabilities(),
+		cmd = { "gopls" },
+		settings = {
+			gopls = get_gopls_settings(),
+		},
+	}
 
 		-- Set up statusline integration if available
 		if package.loaded["lualine"] then

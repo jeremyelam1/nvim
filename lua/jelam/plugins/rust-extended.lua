@@ -14,7 +14,7 @@ return {
         capabilities = capabilities,
         on_attach = function(client, bufnr)
           client.server_capabilities.semanticTokensProvider = nil
-          client.server_capabilities.inlayHintProvider = nil
+          -- inlayHintProvider enabled for native Neovim inlay hints
           vim.lsp.handlers["textDocument/publishDiagnostics"] = vim.lsp.with(
             vim.lsp.diagnostic.on_publish_diagnostics, {
               update_in_insert = false,

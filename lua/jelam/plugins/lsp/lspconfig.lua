@@ -61,10 +61,17 @@ return {
 			end
 		end
 
-		vim.api.nvim_create_autocmd("LspAttach", {
-			group = vim.api.nvim_create_augroup("UserLspConfig", {}),
-			callback = setup_lsp_keymaps,
-		})
+	vim.api.nvim_create_autocmd("LspAttach", {
+		group = vim.api.nvim_create_augroup("UserLspConfig", {}),
+		callback = function(ev)
+			setup_lsp_keymaps(ev)
+			
+			local client = vim.lsp.get_client_by_id(ev.data.client_id)
+			if client and client.server_capabilities.inlayHintProvider then
+				vim.lsp.inlay_hint.enable(true, { bufnr = ev.buf })
+			end
+		end,
+	})
 
 		local signs = { Error = " ", Warn = " ", Hint = "󰠠 ", Info = " " }
 		vim.diagnostic.config({

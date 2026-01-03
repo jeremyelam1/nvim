@@ -20,7 +20,7 @@ return {
 		vim.keymap.set("n", "<leader>e", function()
 			harpoon:list():add()
 		end, { desc = "Harpoon: Add file" })
-		vim.keymap.set("n", "<C-_>", function()
+		vim.keymap.set("n", "-", function()
 			harpoon.ui:toggle_quick_menu(harpoon:list())
 		end, { desc = "Harpoon: Toggle menu" })
 

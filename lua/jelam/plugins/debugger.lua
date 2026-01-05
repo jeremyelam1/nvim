@@ -5,12 +5,24 @@ return {
 			"rcarriga/nvim-dap-ui",
 			"leoluz/nvim-dap-go",
 			"nvim-neotest/nvim-nio",
+			"theHamsta/nvim-dap-virtual-text",
 		},
 		config = function()
 			local dap = require("dap")
 			local dapui = require("dapui")
 
 			require("dapui").setup()
+			require("nvim-dap-virtual-text").setup({
+				enabled = true,
+				enabled_commands = true,
+				highlight_changed_variables = true,
+				highlight_new_as_changed = false,
+				show_stop_reason = true,
+				commented = false,
+				only_first_definition = true,
+				all_references = false,
+				virt_text_pos = "eol",
+			})
 
 			-- Custom setup for Go debugging to fix the ${workspaceRoot} issue
 			require("dap-go").setup({
@@ -66,12 +78,12 @@ return {
 				dapui.close()
 			end
 
-		vim.fn.sign_define("DapBreakpoint", {
-			text = "⏺",
-			texthl = "DapBreakpoint",
-			linehl = "DapBreakpoint",
-			numhl = "DapBreakpoint",
-		})
+			vim.fn.sign_define("DapBreakpoint", {
+				text = "⏺",
+				texthl = "DapBreakpoint",
+				linehl = "DapBreakpoint",
+				numhl = "DapBreakpoint",
+			})
 		end,
 	},
 	{

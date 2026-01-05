@@ -88,6 +88,13 @@ return {
 			float = {
 				source = "if_many",
 				border = "rounded",
+				format = function(diagnostic)
+					local message = diagnostic.message
+					message = message:gsub("\n.*for further information visit.*", "")
+					message = message:gsub("\n.*`#%[warn%(.*%)%]`.*", "")
+					message = message:gsub("\n.*`#%[deny%(.*%)%]`.*", "")
+					return message
+				end,
 			},
 			severity_sort = true,
 			update_in_insert = false,

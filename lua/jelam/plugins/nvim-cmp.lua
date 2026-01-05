@@ -14,6 +14,7 @@ return {
 		"saadparwaiz1/cmp_luasnip", -- for autocompletion
 		"rafamadriz/friendly-snippets", -- useful snippets
 		"onsails/lspkind.nvim", -- vs-code like pictograms
+		"windwp/nvim-autopairs", -- autopairs integration
 	},
 	config = function()
 		local cmp = require("cmp")
@@ -41,7 +42,17 @@ return {
 				["<C-f>"] = cmp.mapping.scroll_docs(4),
 				["<C-Space>"] = cmp.mapping.complete(), -- show completion suggestions
 				["<C-e>"] = cmp.mapping.abort(), -- close completion window
-				["<CR>"] = cmp.mapping.confirm({ select = false }),
+			["<CR>"] = cmp.mapping({
+				i = function(fallback)
+					if cmp.visible() then
+						cmp.confirm({ behavior = cmp.ConfirmBehavior.Replace, select = true })
+					else
+						fallback()
+					end
+				end,
+				s = cmp.mapping.confirm({ select = true }),
+				c = cmp.mapping.confirm({ behavior = cmp.ConfirmBehavior.Replace, select = true }),
+			}),
 			}),
 			-- sources for autocompletion
 			sources = cmp.config.sources({

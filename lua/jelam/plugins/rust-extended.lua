@@ -20,7 +20,6 @@ return {
             checkOnSave = {
               enable = true,
               command = "clippy",
-              extraArgs = { "--", "-A", "unused_variables" },
             },
             check = {
               enable = true,

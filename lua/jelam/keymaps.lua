@@ -86,10 +86,27 @@ km.set("n", "<leader>gotr", "<cmd>GoRmTag<cr>", { desc = "Go Tag: Remove" })
 km.set("n", "<leader>gotc", "<cmd>GoClearTag<cr>", { desc = "Go Tag: Clear" })
 
 -- Dap Keybinds
-km.set("n", "<Leader>dt", "<CR>DapUiToggle<CR>", { desc = "Debug: UI Toggle" })
-km.set("n", "<Leader>db", ":DapToggleBreakpoint<CR>", { desc = "Debug: Break point" })
-km.set("n", "<Leader>dc", "<CR>DapContinue<CR>", { desc = "Debug: Continue" })
-km.set("n", "<Leader>dr", ":lua require('dapui').open({reset = true})<CR>", { desc = "Debug: Run" })
+km.set("n", "<Leader>dt", ":DapUiToggle<CR>", { desc = "Debug: UI Toggle" })
+km.set("n", "<Leader>db", ":DapToggleBreakpoint<CR>", { desc = "Debug: Toggle breakpoint" })
+km.set(
+	"n",
+	"<Leader>dB",
+	":lua require('dap').set_breakpoint(vim.fn.input('Breakpoint condition: '))<CR>",
+	{ desc = "Debug: Conditional breakpoint" }
+)
+km.set("n", "<Leader>dc", ":DapContinue<CR>", { desc = "Debug: Continue" })
+km.set("n", "<Leader>dr", ":lua require('dapui').open({reset = true})<CR>", { desc = "Debug: Reset UI" })
+km.set("n", "<Leader>di", ":DapStepInto<CR>", { desc = "Debug: Step into" })
+km.set("n", "<Leader>do", ":DapStepOver<CR>", { desc = "Debug: Step over" })
+km.set("n", "<Leader>dO", ":DapStepOut<CR>", { desc = "Debug: Step out" })
+km.set("n", "<Leader>dx", ":DapTerminate<CR>", { desc = "Debug: Terminate" })
+km.set("n", "<Leader>dp", ":lua require('dap').pause()<CR>", { desc = "Debug: Pause" })
+km.set("n", "<Leader>dh", ":lua require('dap.ui.widgets').hover()<CR>", { desc = "Debug: Hover" })
+km.set("n", "<Leader>dR", ":DapRestartFrame<CR>", { desc = "Debug: Restart frame" })
+km.set("n", "<F5>", ":DapContinue<CR>", { desc = "Debug: Continue" })
+km.set("n", "<F10>", ":DapStepOver<CR>", { desc = "Debug: Step over" })
+km.set("n", "<F11>", ":DapStepInto<CR>", { desc = "Debug: Step into" })
+km.set("n", "<F12>", ":DapStepOut<CR>", { desc = "Debug: Step out" })
 
 -- Yazi
 km.set("n", "<leader>-", "<cmd>Yazi<cr>", { desc = "Yazi: current file" })

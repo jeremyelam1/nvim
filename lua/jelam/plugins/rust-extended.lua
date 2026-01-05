@@ -14,22 +14,16 @@ return {
         capabilities = capabilities,
         on_attach = function(client, bufnr)
           client.server_capabilities.semanticTokensProvider = nil
-          -- inlayHintProvider enabled for native Neovim inlay hints
-          vim.lsp.handlers["textDocument/publishDiagnostics"] = vim.lsp.with(
-            vim.lsp.diagnostic.on_publish_diagnostics, {
-              update_in_insert = false,
-            }
-          )
         end,
         default_settings = {
           ["rust-analyzer"] = {
             checkOnSave = {
               enable = true,
               command = "clippy",
-              extraArgs = { "--all-targets", "--", "-A", "unused_variables" },
+              extraArgs = { "--", "-A", "unused_variables" },
             },
             check = {
-              enable = false,
+              enable = true,
             },
             cargo = {
               allFeatures = true,
@@ -51,7 +45,7 @@ return {
             },
             diagnostics = {
               enable = true,
-              disabled = { "unresolved-proc-macro", "inactive-code" },
+              disabled = { "unresolved-proc-macro" },
               experimental = {
                 enable = false,
               },

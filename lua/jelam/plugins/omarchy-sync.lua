@@ -67,7 +67,7 @@ local function apply_omarchy_theme()
 end
 
 local function watch_omarchy_theme()
-	local w = vim.loop.new_fs_event()
+	local w = vim.uv.new_fs_event()
 	if not w then
 		return
 	end

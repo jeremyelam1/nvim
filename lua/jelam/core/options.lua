@@ -42,3 +42,7 @@ opt.splitbelow = true -- split horizontal window to the bottom
 
 -- turn off swapfile
 opt.swapfile = false
+
+-- spell checking
+opt.spell = true -- enable spell checking
+opt.spelllang = "en_us" -- set spell check language

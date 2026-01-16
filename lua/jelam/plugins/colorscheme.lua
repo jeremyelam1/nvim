@@ -190,10 +190,10 @@ return {
 					["@markup.raw.markdown_inline"] = { fg = colors["linkarzu_color02"] },
 
 					-- Change the spell underline color
-					SpellBad = { sp = colors["linkarzu_color11"], undercurl = true, bold = true, italic = true },
-					SpellCap = { sp = colors["linkarzu_color12"], undercurl = true, bold = true, italic = true },
-					SpellLocal = { sp = colors["linkarzu_color12"], undercurl = true, bold = true, italic = true },
-					SpellRare = { sp = colors["linkarzu_color04"], undercurl = true, bold = true, italic = true },
+					SpellBad = { sp = colors["linkarzu_color11"], undercurl = true },
+					SpellCap = { sp = colors["linkarzu_color12"], undercurl = true },
+					SpellLocal = { sp = colors["linkarzu_color12"], undercurl = true },
+					SpellRare = { sp = colors["linkarzu_color04"], undercurl = true },
 
 					MiniDiffSignAdd = { fg = colors["linkarzu_color05"], bold = true },
 					MiniDiffSignChange = { fg = colors["linkarzu_color02"], bold = true },

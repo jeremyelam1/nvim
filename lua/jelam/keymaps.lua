@@ -1,15 +1,15 @@
 local km = vim.keymap
 
--- km.set("n", "<leader>ff", require("fzf-lua").files, { desc = "FZF Files" })
-km.set("n", "<leader>fr", require("fzf-lua").registers, { desc = "Registers" })
-km.set("n", "<leader>fm", require("fzf-lua").marks, { desc = "Marks" })
-km.set("n", "<leader>fk", require("fzf-lua").keymaps, { desc = "Keymaps" })
--- km.set("n", "<leader>fw", require("fzf-lua").live_grep, { desc = "FZF Grep" })
-km.set("n", "<leader>fb", require("fzf-lua").buffers, { desc = "FZF Buffers" })
--- km.set("n", "<leader>fj", require("fzf-lua").helptags, { desc = "Help Tags" })
--- km.set("n", "<leader>fgc", require("fzf-lua").git_bcommits, { desc = "Browse File Commits" })
--- km.set("n", "<leader>fgs", require("fzf-lua").git_status, { desc = "Git Status" })
-km.set("n", "<leader>fs", require("fzf-lua").spell_suggest, { desc = "Spelling Suggestions" })
+-- km.set("n", "<leader>ff", function() require("fzf-lua").files() end, { desc = "FZF Files" })
+km.set("n", "<leader>fr", function() require("fzf-lua").registers() end, { desc = "Registers" })
+km.set("n", "<leader>fm", function() require("fzf-lua").marks() end, { desc = "Marks" })
+km.set("n", "<leader>fk", function() require("fzf-lua").keymaps() end, { desc = "Keymaps" })
+-- km.set("n", "<leader>fw", function() require("fzf-lua").live_grep() end, { desc = "FZF Grep" })
+km.set("n", "<leader>fb", function() require("fzf-lua").buffers() end, { desc = "FZF Buffers" })
+-- km.set("n", "<leader>fj", function() require("fzf-lua").helptags() end, { desc = "Help Tags" })
+-- km.set("n", "<leader>fgc", function() require("fzf-lua").git_bcommits() end, { desc = "Browse File Commits" })
+-- km.set("n", "<leader>fgs", function() require("fzf-lua").git_status() end, { desc = "Git Status" })
+km.set("n", "<leader>fs", function() require("fzf-lua").spell_suggest() end, { desc = "Spelling Suggestions" })
 -- km.set("n", "fd", require("fzf-lua").lsp_definitions, { desc = "Jump to Definition" })
 km.set(
 	"n",
@@ -35,8 +35,6 @@ km.set(
 -- Auto-Session Keymaps
 km.set("n", "<leader>wr", "<cmd>SessionRestore<CR>", { desc = "Restore session for cwd" }) -- restore last workspace session for current directory
 km.set("n", "<leader>ws", "<cmd>SessionSave<CR>", { desc = "Save session for auto session root dir" }) -- save workspace session for current working directory
-
-km.set("n", "<leader>ct", ":ThemeToggle<CR>", { desc = "Toggle theme selector" })
 
 -- Theme Keymaps
 km.set("n", "<leader>ct", ":ThemeToggle<CR>", { desc = "Toggle through themes" })

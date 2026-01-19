@@ -46,7 +46,9 @@ return {
 		automatic_installation = true,
 		handlers = {
 			function(server_name)
-				vim.lsp.enable(server_name)
+				-- Default handler: configure all servers with default settings
+				-- Individual server configs are handled in lspconfig.lua
+				require("lspconfig")[server_name].setup({})
 			end,
 		},
 	})

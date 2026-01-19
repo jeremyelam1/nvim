@@ -155,10 +155,10 @@ return {
 
 
 
-	vim.lsp.config.ts_ls = {
-		capabilities = capabilities,
-		settings = {
-			typescript = {
+		vim.lsp.config.ts_ls = {
+			capabilities = capabilities,
+			settings = {
+				typescript = {
 					inlayHints = {
 						includeInlayParameterNameHints = "all",
 						includeInlayParameterNameHintsWhenArgumentMatchesName = false,

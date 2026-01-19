@@ -6,7 +6,7 @@ return {
 			-- Basic spelunker configuration
 			vim.g.spelunker_check_type = 1 -- Aggressive checking
 			vim.g.spelunker_highlight_type = 1 -- Use standard highlighting
-			vim.g.enable_spelunker_vim = 0 -- Start disabled by default
+			vim.g.enable_spelunker_vim = 1 -- Start enabled by default
 			vim.g.spelunker_check_comments = 1 -- Enable checking in comments
 			vim.g.spelunker_disable_uri_checking = 1
 			vim.g.spelunker_disable_email_checking = 1
@@ -21,9 +21,9 @@ return {
 					vim.cmd([[
 						highlight clear SpelunkerSpellBad
 						highlight clear SpelunkerComplexOrCompoundWord
-						highlight SpelunkerSpellBad cterm=underline ctermfg=196 gui=undercurl,bold guifg=#ff0000 guisp=#ff0000
-						highlight SpelunkerComplexOrCompoundWord cterm=underline ctermfg=196 gui=undercurl,bold guifg=#ff0000 guisp=#ff0000
-						highlight SpellBad cterm=underline ctermfg=196 gui=undercurl,bold guifg=#ff0000 guisp=#ff0000
+						highlight SpelunkerSpellBad cterm=underline gui=undercurl guisp=#ff0000
+						highlight SpelunkerComplexOrCompoundWord cterm=underline gui=undercurl guisp=#ff0000
+						highlight SpellBad cterm=underline gui=undercurl guisp=#ff0000
 					]])
 				end,
 			})
@@ -32,9 +32,9 @@ return {
 			vim.cmd([[
 				highlight clear SpelunkerSpellBad
 				highlight clear SpelunkerComplexOrCompoundWord
-				highlight SpelunkerSpellBad cterm=underline ctermfg=196 gui=undercurl,bold guifg=#ff0000 guisp=#ff0000
-				highlight SpelunkerComplexOrCompoundWord cterm=underline ctermfg=196 gui=undercurl,bold guifg=#ff0000 guisp=#ff0000
-				highlight SpellBad cterm=underline ctermfg=196 gui=undercurl,bold guifg=#ff0000 guisp=#ff0000
+				highlight SpelunkerSpellBad cterm=underline gui=undercurl guisp=#ff0000
+				highlight SpelunkerComplexOrCompoundWord cterm=underline gui=undercurl guisp=#ff0000
+				highlight SpellBad cterm=underline gui=undercurl guisp=#ff0000
 			]])
 
 			-- Common programming terms whitelist
@@ -87,11 +87,11 @@ return {
 				"xml",
 			}
 
-			-- Set up spell checking for specific file types (but don't enable by default)
+			-- Set up spell checking for specific file types (enabled by default)
 			vim.api.nvim_create_autocmd({ "FileType" }, {
 				pattern = { "lua", "go" },
 				callback = function()
-					vim.opt_local.spell = false
+					vim.opt_local.spell = true
 					vim.opt_local.spelllang = "en_us"
 				end,
 			})
@@ -115,11 +115,11 @@ return {
 				vim.cmd([[silent! call spelunker#clear()]])
 			end, { desc = "Clear spelling highlights" })
 
-			-- Initialize spelunker after the plugin is loaded (disabled by default)
+			-- Initialize spelunker after the plugin is loaded (enabled by default)
 			vim.api.nvim_create_autocmd("VimEnter", {
 				callback = function()
 					vim.schedule(function()
-						vim.cmd([[silent! call spelunker#clear()]])
+						vim.cmd([[silent! call spelunker#check()]])
 					end)
 				end,
 			})

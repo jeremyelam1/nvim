@@ -47,8 +47,14 @@ km.set("n", "<leader>cO", ":OmarchySyncColors<CR>", { desc = "Sync colors from O
 -- Telescope Keybinds
 km.set("n", "<leader>ff", "<cmd>Telescope find_files<cr>", { desc = "Fuzzy find files in cwd" })
 km.set("n", "<leader>fe", "<cmd>Telescope oldfiles<cr>", { desc = "Fuzzy find recent files" })
-km.set("n", "<leader>fw", "<cmd>Telescope live_grep<cr>", { desc = "Find string in cwd" })
-km.set("n", "<leader>fc", "<cmd>Telescope grep_string<cr>", { desc = "Find string under cursor in cwd" })
+km.set("n", "<leader>fw", function()
+	require("fzf-lua").live_grep()
+end, { desc = "Find string in cwd" })
+-- km.set("n", "<leader>fw", "<cmd>Telescope live_grep<cr>", { desc = "Find string in cwd" })
+km.set("n", "<leader>fc", function()
+	require("fzf-lua").grep_cword()
+end, { desc = "Find string under cursor in cwd" })
+-- km.set("n", "<leader>fc", "<cmd>Telescope grep_string<cr>", { desc = "Find string under cursor in cwd" })
 km.set("n", "<leader>ft", "<cmd>TodoTelescope<cr>", { desc = "Find todos" })
 
 -- Hop Keybinds

@@ -155,10 +155,10 @@ return {
 
 
 
-		vim.lsp.config.tsserver = {
-			capabilities = capabilities,
-			settings = {
-				typescript = {
+	vim.lsp.config.ts_ls = {
+		capabilities = capabilities,
+		settings = {
+			typescript = {
 					inlayHints = {
 						includeInlayParameterNameHints = "all",
 						includeInlayParameterNameHintsWhenArgumentMatchesName = false,
@@ -178,6 +178,47 @@ return {
 						includeInlayPropertyDeclarationTypeHints = true,
 						includeInlayFunctionLikeReturnTypeHints = true,
 						includeInlayEnumMemberValueHints = true,
+					},
+				},
+			},
+		}
+
+		vim.lsp.config.rust_analyzer = {
+			capabilities = capabilities,
+			settings = {
+				["rust-analyzer"] = {
+					checkOnSave = {
+						command = "clippy",
+					},
+					cargo = {
+						allFeatures = true,
+					},
+					procMacro = {
+						enable = true,
+					},
+				},
+			},
+		}
+
+		vim.lsp.config.ltex = {
+			capabilities = capabilities,
+			filetypes = { "markdown", "text", "gitcommit", "tex" },
+			settings = {
+				ltex = {
+					language = "en-US",
+					diagnosticSeverity = "information",
+					sentenceCacheSize = 2000,
+					additionalRules = {
+						enablePickyRules = true,
+						motherTongue = "en-US",
+					},
+					disabledRules = {
+						["en-US"] = { "MORFOLOGIK_RULE_EN_US" },
+					},
+					dictionary = {
+						["en-US"] = {
+							"nvim", "lua", "lsp", "treesitter", "config"
+						},
 					},
 				},
 			},

@@ -24,8 +24,8 @@ return {
 					package_uninstalled = "✗",
 				},
 			},
-			max_concurrent_installers = 10,
-		})
+		max_concurrent_installers = 10,
+	})
 
 	mason_lspconfig.setup({
 		ensure_installed = {
@@ -40,6 +40,8 @@ return {
 			"prismals",
 			"ts_ls",
 			"jsonls",
+			"rust_analyzer",
+			"ltex",
 		},
 		automatic_installation = true,
 		handlers = {
@@ -54,7 +56,6 @@ return {
 				-- formatters
 				"prettier", -- prettier formatter
 				"stylua", -- lua formatter
-				"isort", -- python formatter
 				"black", -- python formatter
 
 				"goimports", -- go imports formatter
@@ -62,7 +63,6 @@ return {
 				"golines", -- line length formatter for go
 
 				-- linters
-				"pylint", -- python linter
 				"eslint_d", -- js linter
 				"golangci-lint", -- go linter
 				"shellcheck", -- shell script linter
@@ -79,7 +79,7 @@ return {
 			},
 			auto_update = true,
 			run_on_start = true,
-			start_delay = 3000, -- 3 second delay
+			start_delay = 3000,
 		})
 	end,
 }

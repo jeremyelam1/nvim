@@ -2,9 +2,14 @@ require("jelam.core")
 require("jelam.lazy")
 require("jelam.current-theme")
 require("jelam.keymaps")
--- require("jelam.fix-diagnostics") -- Disabled: uses deprecated API that breaks diagnostics
+
+local undo_dir = vim.fn.stdpath("config") .. "/undo"
+if vim.fn.isdirectory(undo_dir) == 0 then
+  vim.fn.mkdir(undo_dir, "p")
+end
+
 vim.opt.undofile = true
-vim.opt.undodir = os.getenv("HOME") .. "/.config/nvim/undo"
+vim.opt.undodir = undo_dir
 vim.opt.undolevels = 1000
 vim.opt.undoreload = 10000
 vim.api.nvim_create_autocmd("CursorMoved", {

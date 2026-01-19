@@ -22,41 +22,10 @@ return {
 				only_first_definition = true,
 				all_references = false,
 				virt_text_pos = "eol",
-			})
+		})
 
-			-- Custom setup for Go debugging to fix the ${workspaceRoot} issue
-			require("dap-go").setup({
-				-- dap-go configuration
-				dap_configurations = {
-					{
-						type = "go",
-						name = "Debug",
-						request = "launch",
-						program = "${file}",
-					},
-					{
-						type = "go",
-						name = "Debug Package",
-						request = "launch",
-						program = "${fileDirname}",
-					},
-					{
-						type = "go",
-						name = "Debug Main Package",
-						request = "launch",
-						program = "./cmd/server", -- Adjust this path to your main package
-					},
-					{
-						type = "go",
-						name = "Debug Custom Path",
-						request = "launch",
-						program = function()
-							return vim.fn.input("Path to main package: ", vim.fn.getcwd() .. "/", "file")
-						end,
-					},
-				},
-				-- Ensure delve is properly configured
-				delve = {
+		require("dap-go").setup({
+			delve = {
 					path = "dlv", -- Path to the delve command
 					initialize_timeout_sec = 20,
 					port = "${port}",
@@ -64,6 +33,87 @@ return {
 					build_flags = "",
 				},
 			})
+
+			dap.configurations.go = {
+				{
+					type = "go",
+					name = "Debug main.go",
+					request = "launch",
+					program = "${workspaceFolder}/main.go",
+				},
+				{
+					type = "go",
+					name = "Debug config view",
+					request = "launch",
+					program = "${workspaceFolder}",
+					args = { "config", "view" },
+				},
+				{
+					type = "go",
+					name = "Debug Scheduler Service",
+					request = "launch",
+					program = "${workspaceFolder}/cmd/scheduler",
+					cwd = "${workspaceFolder}/cmd/scheduler",
+				},
+				{
+					type = "go",
+					name = "Debug Posting Service",
+					request = "launch",
+					program = "${workspaceFolder}/cmd/posting",
+					cwd = "${workspaceFolder}/cmd/posting",
+				},
+				{
+					type = "go",
+					name = "Debug Current File",
+					request = "launch",
+					program = "${file}",
+					buildFlags = "-gcflags='all=-N -l'",
+					showGoroutineStack = true,
+				},
+				{
+					type = "go",
+					name = "Debug Package",
+					request = "launch",
+					program = "${fileDirname}",
+					buildFlags = "-gcflags='all=-N -l'",
+					showGoroutineStack = true,
+				},
+				{
+					type = "go",
+					name = "Debug Main Package",
+					request = "launch",
+					program = function()
+						if vim.fn.filereadable("./cmd/server/main.go") == 1 then
+							return "./cmd/server/main.go"
+						elseif vim.fn.filereadable("./main.go") == 1 then
+							return "./main.go"
+						end
+						return vim.fn.input("Path to main.go: ", "", "file")
+					end,
+					buildFlags = "-gcflags='all=-N -l'",
+					showGoroutineStack = true,
+				},
+				{
+					type = "go",
+					name = "Debug Test",
+					request = "launch",
+					mode = "test",
+					program = "${file}",
+					buildFlags = "-gcflags='all=-N -l'",
+					showGoroutineStack = true,
+				},
+				{
+					type = "go",
+					name = "Attach to Process",
+					request = "attach",
+					mode = "remote",
+					port = function()
+						return tonumber(vim.fn.input("Delve port: ", "2345"))
+					end,
+					host = "127.0.0.1",
+					showGoroutineStack = true,
+				},
+			}
 
 			dap.listeners.before.attach.dapui_config = function()
 				dapui.open()

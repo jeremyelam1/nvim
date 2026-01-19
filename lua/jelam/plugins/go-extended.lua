@@ -32,6 +32,12 @@ return {
 				importShortcut = "Both",
 				symbolMatcher = "fuzzy",
 				symbolStyle = "Dynamic",
+				directoryFilters = {
+					"-**/node_modules",
+					"-**/vendor",
+					"-**/.git",
+				},
+				buildFlags = { "-tags=integration" },
 				codelenses = {
 					gc_details = true,
 					generate = true,
@@ -252,9 +258,13 @@ return {
 
 			-- Diagnostic settings
 			diagnostic = {
-				hdlr = true, -- Let go.nvim handle diagnostics
+				hdlr = true,
 				underline = true,
-				virtual_text = { space = 0, prefix = "■" },
+				virtual_text = {
+					space = 0,
+					prefix = "■",
+					source = "if_many",
+				},
 				signs = true,
 			},
 		})
@@ -290,6 +300,44 @@ return {
 					"<cmd>GoTagRm yaml<CR>",
 					vim.tbl_extend("force", opts, { desc = "Remove yaml tags" })
 				)
+
+				vim.keymap.set(
+					"n",
+					"<leader>gdb",
+					"<cmd>GoDebug<CR>",
+					vim.tbl_extend("force", opts, { desc = "Start debugging" })
+				)
+				vim.keymap.set(
+					"n",
+					"<leader>gdt",
+					"<cmd>GoDebug -t<CR>",
+					vim.tbl_extend("force", opts, { desc = "Debug test" })
+				)
+				vim.keymap.set(
+					"n",
+					"<leader>gds",
+					"<cmd>GoDbgStop<CR>",
+					vim.tbl_extend("force", opts, { desc = "Stop debugger" })
+				)
+				vim.keymap.set(
+					"n",
+					"<leader>gdr",
+					"<cmd>lua require('dap').restart()<CR>",
+					vim.tbl_extend("force", opts, { desc = "Restart debugger" })
+				)
+				vim.keymap.set(
+					"n",
+					"<leader>gdg",
+					"<cmd>lua require('dap-go').debug_goroutines()<CR>",
+					vim.tbl_extend("force", opts, { desc = "Debug goroutines" })
+				)
+				vim.keymap.set(
+					"n",
+					"<leader>gdc",
+					"<cmd>lua require('dap').toggle_breakpoint()<CR>",
+					vim.tbl_extend("force", opts, { desc = "Toggle breakpoint" })
+				)
+
 
 				-- Test commands
 				-- vim.keymap.set(

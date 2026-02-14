@@ -1,40 +1,38 @@
 -- Copilot is currently disabled
 -- To enable, uncomment the plugin spec below
 
--- return {
---   "zbirenbaum/copilot.lua",
---   cmd = "Copilot",
---   event = "InsertEnter",
---   config = function()
---     require("copilot").setup({
---       panel = {
---         enabled = true,
---         auto_refresh = true,
---         keymap = {
---           accept = "<CR>",
---           refresh = "gr",
---           open = "<M-CR>",
---         },
---       },
---       suggestion = {
---         enabled = true,
---         auto_trigger = true,
---         keymap = {
---           accept = "<Tab>",
---           next = "<M-]>",
---           prev = "<M-[>",
---           dismiss = "<C-]>",
---         },
---       },
---       filetypes = {
---         yaml = false,
---         markdown = false,
---         help = false,
---         gitcommit = false,
---         ["."] = false,
---       },
---     })
---   end,
--- }
-
-return {}
+return {
+	"zbirenbaum/copilot.lua",
+	cmd = "Copilot",
+	event = "InsertEnter",
+	config = function()
+		require("copilot").setup({
+			panel = {
+				enabled = true,
+				auto_refresh = true,
+				keymap = {
+					accept = "<CR>",
+					refresh = "gr",
+					open = "<M-CR>",
+				},
+			},
+			suggestion = {
+				enabled = true,
+				auto_trigger = true,
+				keymap = {
+					accept = "<Tab>",
+					next = "<M-]>",
+					prev = "<M-[>",
+					dismiss = "<C-]>",
+				},
+			},
+			filetypes = {
+				yaml = false,
+				markdown = false,
+				help = false,
+				gitcommit = false,
+				["."] = false,
+			},
+		})
+	end,
+}
